@@ -86,7 +86,7 @@ input[type="file"]{
   color:#0f172a;
 }
 
-/* ACCESS CODE ROW FIX */
+/* ACCESS CODE ROW */
 .code-input-row{
   display:flex !important;
   flex-direction:row !important;
@@ -399,7 +399,7 @@ button:disabled{
         >
 
         <div class="help">
-          Uploads must be exactly 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
+          For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
         </div>
       </div>
     </div>
@@ -444,12 +444,6 @@ const SUPABASE_ANON_KEY =
 
 const FUNCTION_URL =
   "https://scnlepcadipdhhzppovq.supabase.co/functions/v1/hr-admin";
-
-const REQUIRED_WIDTH =
-  1920;
-
-const REQUIRED_HEIGHT =
-  1080;
 
 const adminCodeInput =
   document.getElementById("adminCode");
@@ -670,124 +664,6 @@ function isVideo(fileType){
 
   return fileType &&
     fileType.startsWith("video/");
-}
-
-function validateImageDimensions(file){
-
-  return new Promise((resolve,reject) => {
-
-    const objectUrl =
-      URL.createObjectURL(file);
-
-    const img =
-      new Image();
-
-    img.onload =
-      () => {
-
-        const width =
-          img.naturalWidth;
-
-        const height =
-          img.naturalHeight;
-
-        URL.revokeObjectURL(
-          objectUrl
-        );
-
-        resolve({
-          valid:width === REQUIRED_WIDTH && height === REQUIRED_HEIGHT,
-          width:width,
-          height:height
-        });
-      };
-
-    img.onerror =
-      () => {
-
-        URL.revokeObjectURL(
-          objectUrl
-        );
-
-        reject(
-          new Error("Could not read image dimensions.")
-        );
-      };
-
-    img.src =
-      objectUrl;
-  });
-}
-
-function validateVideoDimensions(file){
-
-  return new Promise((resolve,reject) => {
-
-    const objectUrl =
-      URL.createObjectURL(file);
-
-    const video =
-      document.createElement("video");
-
-    video.preload =
-      "metadata";
-
-    video.onloadedmetadata =
-      () => {
-
-        const width =
-          video.videoWidth;
-
-        const height =
-          video.videoHeight;
-
-        URL.revokeObjectURL(
-          objectUrl
-        );
-
-        resolve({
-          valid:width === REQUIRED_WIDTH && height === REQUIRED_HEIGHT,
-          width:width,
-          height:height
-        });
-      };
-
-    video.onerror =
-      () => {
-
-        URL.revokeObjectURL(
-          objectUrl
-        );
-
-        reject(
-          new Error("Could not read video dimensions.")
-        );
-      };
-
-    video.src =
-      objectUrl;
-  });
-}
-
-async function validateFileDimensions(file){
-
-  if(isImage(file.type)){
-
-    return await validateImageDimensions(
-      file
-    );
-  }
-
-  if(isVideo(file.type)){
-
-    return await validateVideoDimensions(
-      file
-    );
-  }
-
-  throw new Error(
-    "Unsupported file type. Upload a 1920 x 1080 image or MP4 video."
-  );
 }
 
 function renderPreview(item){
@@ -1153,48 +1029,6 @@ async function uploadFile(){
   uploadButton.disabled =
     true;
 
-  setStatus(
-    "Checking file dimensions...",
-    ""
-  );
-
-  try{
-
-    const dimensionCheck =
-      await validateFileDimensions(
-        file
-      );
-
-    if(!dimensionCheck.valid){
-
-      setStatus(
-        "Upload blocked. This file is " +
-        dimensionCheck.width +
-        " x " +
-        dimensionCheck.height +
-        ". It must be exactly 1920 x 1080.",
-        "bad"
-      );
-
-      uploadButton.disabled =
-        false;
-
-      return;
-    }
-
-  }catch(error){
-
-    setStatus(
-      error.message,
-      "bad"
-    );
-
-    uploadButton.disabled =
-      false;
-
-    return;
-  }
-
   const formData =
     new FormData();
 
@@ -1224,7 +1058,7 @@ async function uploadFile(){
   );
 
   setStatus(
-    "Uploading 1920 x 1080 file...",
+    "Uploading file...",
     ""
   );
 
@@ -1394,7 +1228,7 @@ rememberButton.addEventListener(
 
 fileInput.addEventListener(
   "change",
-  async () => {
+  () => {
 
     const file =
       fileInput.files[0];
@@ -1404,43 +1238,9 @@ fileInput.addEventListener(
     }
 
     setStatus(
-      "Checking selected file...",
-      ""
+      "File selected. For best display, use 1920 x 1080.",
+      "good"
     );
-
-    try{
-
-      const dimensionCheck =
-        await validateFileDimensions(
-          file
-        );
-
-      if(dimensionCheck.valid){
-
-        setStatus(
-          "File accepted: 1920 x 1080.",
-          "good"
-        );
-
-      }else{
-
-        setStatus(
-          "Wrong size: " +
-          dimensionCheck.width +
-          " x " +
-          dimensionCheck.height +
-          ". File must be exactly 1920 x 1080.",
-          "bad"
-        );
-      }
-
-    }catch(error){
-
-      setStatus(
-        error.message,
-        "bad"
-      );
-    }
   }
 );
 
