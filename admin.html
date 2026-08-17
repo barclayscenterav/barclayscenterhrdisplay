@@ -102,10 +102,17 @@ input[type="file"]{
 }
 
 .code-input-row button{
-  flex:0 0 110px !important;
-  width:110px !important;
+  flex:0 0 auto !important;
   margin:0 !important;
   white-space:nowrap !important;
+}
+
+#checkCodeButton{
+  width:130px !important;
+}
+
+#toggleCodeButton{
+  width:100px !important;
 }
 
 button{
@@ -242,6 +249,7 @@ button:disabled{
   color:#94a3b8;
   font-size:13px;
   text-align:center;
+  font-weight:bold;
 }
 
 .preview img,
@@ -292,9 +300,12 @@ button:disabled{
     flex-direction:row !important;
   }
 
-  .code-input-row button{
-    flex:0 0 90px !important;
-    width:90px !important;
+  #checkCodeButton{
+    width:115px !important;
+  }
+
+  #toggleCodeButton{
+    width:85px !important;
   }
 
   .item{
@@ -308,6 +319,17 @@ button:disabled{
 
   .item-controls{
     grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:520px){
+  .code-input-row{
+    flex-direction:column !important;
+  }
+
+  #checkCodeButton,
+  #toggleCodeButton{
+    width:100% !important;
   }
 }
 </style>
@@ -339,14 +361,12 @@ button:disabled{
           placeholder="Enter shared upload code"
         >
 
-        <button id="toggleCodeButton" class="secondary" type="button">
-          Show
-        </button>
-      </div>
-
-      <div class="button-row">
         <button id="checkCodeButton" class="success" type="button">
           Check Code
+        </button>
+
+        <button id="toggleCodeButton" class="secondary" type="button">
+          Show
         </button>
       </div>
 
@@ -395,11 +415,11 @@ button:disabled{
         <input
           id="fileInput"
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
+          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,application/pdf,.pdf"
         >
 
         <div class="help">
-          For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
+          For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, MP4, and PDF.
         </div>
       </div>
     </div>
@@ -666,6 +686,11 @@ function isVideo(fileType){
     fileType.startsWith("video/");
 }
 
+function isPdf(fileType){
+
+  return fileType === "application/pdf";
+}
+
 function renderPreview(item){
 
   const preview =
@@ -699,6 +724,11 @@ function renderPreview(item){
       true;
 
     preview.appendChild(video);
+
+  }else if(isPdf(item.file_type)){
+
+    preview.innerText =
+      "PDF";
 
   }else{
 
