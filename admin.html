@@ -86,11 +86,26 @@ input[type="file"]{
   color:#0f172a;
 }
 
+/* ACCESS CODE ROW FIX */
 .code-input-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 110px;
-  gap:10px;
-  align-items:center;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:stretch !important;
+  gap:10px !important;
+  width:100% !important;
+}
+
+.code-input-row input{
+  flex:1 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+}
+
+.code-input-row button{
+  flex:0 0 110px !important;
+  width:110px !important;
+  margin:0 !important;
+  white-space:nowrap !important;
 }
 
 button{
@@ -271,6 +286,15 @@ button:disabled{
 @media(max-width:800px){
   .grid{
     grid-template-columns:1fr;
+  }
+
+  .code-input-row{
+    flex-direction:row !important;
+  }
+
+  .code-input-row button{
+    flex:0 0 90px !important;
+    width:90px !important;
   }
 
   .item{
