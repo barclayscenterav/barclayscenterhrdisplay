@@ -86,6 +86,12 @@ input[type="file"]{
   color:#0f172a;
 }
 
+.code-row{
+  display:grid;
+  grid-template-columns:1fr 110px;
+  gap:10px;
+}
+
 button{
   padding:14px 18px;
   border:none;
@@ -150,6 +156,12 @@ button:disabled{
 
 #status.bad{
   color:#f87171;
+}
+
+.help{
+  color:#94a3b8;
+  font-size:14px;
+  line-height:1.4;
 }
 
 .playlist{
@@ -242,6 +254,10 @@ button:disabled{
     grid-template-columns:1fr;
   }
 
+  .code-row{
+    grid-template-columns:1fr;
+  }
+
   .item{
     grid-template-columns:1fr;
   }
@@ -276,11 +292,18 @@ button:disabled{
 
     <div class="field">
       <label for="adminCode">Shared HR Upload Code</label>
-      <input
-        id="adminCode"
-        type="password"
-        placeholder="Enter shared upload code"
-      >
+
+      <div class="code-row">
+        <input
+          id="adminCode"
+          type="password"
+          placeholder="Enter shared upload code"
+        >
+
+        <button id="toggleCodeButton" class="secondary" type="button">
+          Show
+        </button>
+      </div>
     </div>
 
     <div class="button-row">
@@ -323,8 +346,12 @@ button:disabled{
         <input
           id="fileInput"
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,application/pdf"
+          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
         >
+
+        <div class="help">
+          Uploads must be exactly 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
+        </div>
       </div>
     </div>
 
@@ -367,10 +394,19 @@ const SUPABASE_ANON_KEY =
   "sb_publishable_FSLIkrVTT9GkAxXjTWoWTw_g9_BsURe";
 
 const FUNCTION_URL =
- "https://scnlepcadipdhhzppovq.supabase.co/functions/v1/hr-admin";
+  "https://scnlepcadipdhhzppovq.supabase.co/functions/v1/hr-admin";
+
+const REQUIRED_WIDTH =
+  1920;
+
+const REQUIRED_HEIGHT =
+  1080;
 
 const adminCodeInput =
   document.getElementById("adminCode");
+
+const toggleCodeButton =
+  document.getElementById("toggleCodeButton");
 
 const titleInput =
   document.getElementById("titleInput");
@@ -417,6 +453,18 @@ function setStatus(message,type){
 
   statusEl.className =
     type || "";
+}
+
+function toggleCodeVisibility(){
+
+  const isHidden =
+    adminCodeInput.type === "password";
+
+  adminCodeInput.type =
+    isHidden ? "text" : "password";
+
+  toggleCodeButton.innerText =
+    isHidden ? "Hide" : "Show";
 }
 
 function getHeaders(){
@@ -467,6 +515,124 @@ function isVideo(fileType){
     fileType.startsWith("video/");
 }
 
+function validateImageDimensions(file){
+
+  return new Promise((resolve,reject) => {
+
+    const objectUrl =
+      URL.createObjectURL(file);
+
+    const img =
+      new Image();
+
+    img.onload =
+      () => {
+
+        const width =
+          img.naturalWidth;
+
+        const height =
+          img.naturalHeight;
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        resolve({
+          valid:width === REQUIRED_WIDTH && height === REQUIRED_HEIGHT,
+          width:width,
+          height:height
+        });
+      };
+
+    img.onerror =
+      () => {
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        reject(
+          new Error("Could not read image dimensions.")
+        );
+      };
+
+    img.src =
+      objectUrl;
+  });
+}
+
+function validateVideoDimensions(file){
+
+  return new Promise((resolve,reject) => {
+
+    const objectUrl =
+      URL.createObjectURL(file);
+
+    const video =
+      document.createElement("video");
+
+    video.preload =
+      "metadata";
+
+    video.onloadedmetadata =
+      () => {
+
+        const width =
+          video.videoWidth;
+
+        const height =
+          video.videoHeight;
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        resolve({
+          valid:width === REQUIRED_WIDTH && height === REQUIRED_HEIGHT,
+          width:width,
+          height:height
+        });
+      };
+
+    video.onerror =
+      () => {
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        reject(
+          new Error("Could not read video dimensions.")
+        );
+      };
+
+    video.src =
+      objectUrl;
+  });
+}
+
+async function validateFileDimensions(file){
+
+  if(isImage(file.type)){
+
+    return await validateImageDimensions(
+      file
+    );
+  }
+
+  if(isVideo(file.type)){
+
+    return await validateVideoDimensions(
+      file
+    );
+  }
+
+  throw new Error(
+    "Unsupported file type. Upload a 1920 x 1080 image or MP4 video."
+  );
+}
+
 function renderPreview(item){
 
   const preview =
@@ -504,7 +670,7 @@ function renderPreview(item){
   }else{
 
     preview.innerText =
-      "PDF";
+      "FILE";
   }
 
   return preview;
@@ -831,6 +997,51 @@ async function uploadFile(){
     return;
   }
 
+  uploadButton.disabled =
+    true;
+
+  setStatus(
+    "Checking file dimensions...",
+    ""
+  );
+
+  try{
+
+    const dimensionCheck =
+      await validateFileDimensions(
+        file
+      );
+
+    if(!dimensionCheck.valid){
+
+      setStatus(
+        "Upload blocked. This file is " +
+        dimensionCheck.width +
+        " x " +
+        dimensionCheck.height +
+        ". It must be exactly 1920 x 1080.",
+        "bad"
+      );
+
+      uploadButton.disabled =
+        false;
+
+      return;
+    }
+
+  }catch(error){
+
+    setStatus(
+      error.message,
+      "bad"
+    );
+
+    uploadButton.disabled =
+      false;
+
+    return;
+  }
+
   const formData =
     new FormData();
 
@@ -859,11 +1070,8 @@ async function uploadFile(){
     file
   );
 
-  uploadButton.disabled =
-    true;
-
   setStatus(
-    "Uploading...",
+    "Uploading 1920 x 1080 file...",
     ""
   );
 
@@ -977,6 +1185,11 @@ function rememberCodeThisSession(){
   );
 }
 
+toggleCodeButton.addEventListener(
+  "click",
+  toggleCodeVisibility
+);
+
 uploadButton.addEventListener(
   "click",
   uploadFile
@@ -1000,6 +1213,58 @@ saveOrderButton.addEventListener(
 rememberButton.addEventListener(
   "click",
   rememberCodeThisSession
+);
+
+fileInput.addEventListener(
+  "change",
+  async () => {
+
+    const file =
+      fileInput.files[0];
+
+    if(!file){
+      return;
+    }
+
+    setStatus(
+      "Checking selected file...",
+      ""
+    );
+
+    try{
+
+      const dimensionCheck =
+        await validateFileDimensions(
+          file
+        );
+
+      if(dimensionCheck.valid){
+
+        setStatus(
+          "File accepted: 1920 x 1080.",
+          "good"
+        );
+
+      }else{
+
+        setStatus(
+          "Wrong size: " +
+          dimensionCheck.width +
+          " x " +
+          dimensionCheck.height +
+          ". File must be exactly 1920 x 1080.",
+          "bad"
+        );
+      }
+
+    }catch(error){
+
+      setStatus(
+        error.message,
+        "bad"
+      );
+    }
+  }
 );
 
 const savedCode =
