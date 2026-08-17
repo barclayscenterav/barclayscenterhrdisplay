@@ -46,6 +46,7 @@ iframe.media{
   color:#cbd5e1;
   font-size:2rem;
   padding:30px;
+  line-height:1.35;
 }
 
 #overlay{
@@ -80,6 +81,20 @@ iframe.media{
   text-shadow:0 2px 8px rgba(0,0,0,0.8);
 }
 
+#debug{
+  position:fixed;
+  top:10px;
+  left:10px;
+  background:rgba(0,0,0,0.7);
+  color:#cbd5e1;
+  font-size:13px;
+  padding:8px 10px;
+  border-radius:8px;
+  z-index:10;
+  max-width:90vw;
+  word-break:break-word;
+}
+
 .hidden{
   display:none !important;
 }
@@ -99,10 +114,16 @@ iframe.media{
   <div id="counter"></div>
 </div>
 
+<div id="debug"></div>
+
 <script type="module">
 import {
   createClient
 } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+/* =========================
+   SUPABASE CONFIG
+========================= */
 
 const SUPABASE_URL =
   "https://scnlepcadipdhhzppovq.supabase.co";
@@ -110,17 +131,22 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   "sb_publishable_FSLIkrVTT9GkAxXjTWoWTw_g9_BsURe";
 
+/* =========================
+   CLIENT
+========================= */
+
 const supabase =
   createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
 
+/* =========================
+   ELEMENTS
+========================= */
+
 const stage =
   document.getElementById("stage");
-
-const empty =
-  document.getElementById("empty");
 
 const overlay =
   document.getElementById("overlay");
@@ -131,6 +157,13 @@ const titleEl =
 const counter =
   document.getElementById("counter");
 
+const debug =
+  document.getElementById("debug");
+
+/* =========================
+   STATE
+========================= */
+
 let playlist =
   [];
 
@@ -139,6 +172,22 @@ let currentIndex =
 
 let timer =
   null;
+
+let hasStarted =
+  false;
+
+let realtimeChannel =
+  null;
+
+/* =========================
+   HELPERS
+========================= */
+
+function setDebug(message){
+
+  debug.innerText =
+    message || "";
+}
 
 function isImage(fileType){
 
@@ -165,50 +214,6 @@ function clearTimer(){
   }
 }
 
-async function loadPlaylist(){
-
-  const { data, error } =
-    await supabase
-      .from("playlist_items")
-      .select("*")
-      .eq("is_active",true)
-      .order(
-        "sort_order",
-        {
-          ascending:true
-        }
-      );
-
-  if(error){
-
-    showEmpty(
-      error.message
-    );
-
-    return;
-  }
-
-  playlist =
-    data || [];
-
-  if(!playlist.length){
-
-    showEmpty(
-      "No active playlist items."
-    );
-
-    return;
-  }
-
-  if(currentIndex >= playlist.length){
-    currentIndex = 0;
-  }
-
-  showItem(
-    currentIndex
-  );
-}
-
 function showEmpty(message){
 
   clearTimer();
@@ -225,12 +230,151 @@ function showEmpty(message){
   div.innerText =
     message;
 
-  stage.appendChild(div);
+  stage.appendChild(
+    div
+  );
 
   overlay.classList.add(
     "hidden"
   );
 }
+
+function scheduleNext(seconds){
+
+  const safeSeconds =
+    Math.max(
+      1,
+      Number(seconds || 10)
+    );
+
+  timer =
+    setTimeout(
+      nextItem,
+      safeSeconds * 1000
+    );
+}
+
+function nextItem(){
+
+  clearTimer();
+
+  if(!playlist.length){
+
+    showEmpty(
+      "No active playlist items."
+    );
+
+    return;
+  }
+
+  currentIndex =
+    (currentIndex + 1) % playlist.length;
+
+  showItem(
+    currentIndex
+  );
+}
+
+/* =========================
+   LOAD PLAYLIST
+========================= */
+
+async function loadPlaylist(options = {}){
+
+  const shouldRestart =
+    options.restart === true;
+
+  const shouldKeepCurrent =
+    options.keepCurrent === true;
+
+  const oldId =
+    playlist[currentIndex]?.id || null;
+
+  setDebug(
+    "Checking playlist..."
+  );
+
+  const result =
+    await supabase
+      .from("playlist_items")
+      .select("*")
+      .eq("is_active",true)
+      .order(
+        "sort_order",
+        {
+          ascending:true
+        }
+      );
+
+  if(result.error){
+
+    showEmpty(
+      "Playlist error:\n" +
+      result.error.message +
+      "\n\nCheck Supabase RLS policy, anon/publishable key, and table name."
+    );
+
+    setDebug(
+      "Error: " + result.error.message
+    );
+
+    return;
+  }
+
+  playlist =
+    result.data || [];
+
+  setDebug(
+    "Active playlist items found: " + playlist.length
+  );
+
+  if(!playlist.length){
+
+    showEmpty(
+      "No active playlist items.\n\nCheck that at least one item in Supabase has is_active = true."
+    );
+
+    return;
+  }
+
+  if(shouldKeepCurrent && oldId){
+
+    const matchingIndex =
+      playlist.findIndex(
+        item => item.id === oldId
+      );
+
+    if(matchingIndex !== -1){
+
+      currentIndex =
+        matchingIndex;
+
+    }else{
+
+      currentIndex =
+        0;
+    }
+
+  }else if(currentIndex >= playlist.length){
+
+    currentIndex =
+      0;
+  }
+
+  if(!hasStarted || shouldRestart){
+
+    hasStarted =
+      true;
+
+    showItem(
+      currentIndex
+    );
+  }
+}
+
+/* =========================
+   SHOW ITEM
+========================= */
 
 function showItem(index){
 
@@ -248,6 +392,15 @@ function showItem(index){
   const item =
     playlist[index];
 
+  if(!item){
+
+    showEmpty(
+      "Playlist item could not be loaded."
+    );
+
+    return;
+  }
+
   stage.innerHTML =
     "";
 
@@ -260,6 +413,13 @@ function showItem(index){
 
   counter.innerText =
     `${index + 1} / ${playlist.length}`;
+
+  setDebug(
+    "Playing: " +
+    (item.title || "Untitled") +
+    " | " +
+    (item.file_type || "unknown type")
+  );
 
   let el;
 
@@ -277,7 +437,30 @@ function showItem(index){
     el.className =
       "media";
 
-    stage.appendChild(el);
+    el.onload =
+      () => {
+
+        setDebug(
+          "Playing image: " +
+          (item.title || "Untitled")
+        );
+      };
+
+    el.onerror =
+      () => {
+
+        setDebug(
+          "Image failed to load. Check that the hr-content bucket is public."
+        );
+
+        scheduleNext(
+          3
+        );
+      };
+
+    stage.appendChild(
+      el
+    );
 
     scheduleNext(
       item.duration_seconds
@@ -303,22 +486,53 @@ function showItem(index){
     el.playsInline =
       true;
 
-    stage.appendChild(el);
+    el.controls =
+      false;
+
+    stage.appendChild(
+      el
+    );
+
+    el.addEventListener(
+      "loadeddata",
+      () => {
+
+        setDebug(
+          "Playing video: " +
+          (item.title || "Untitled")
+        );
+      }
+    );
 
     el.addEventListener(
       "ended",
       nextItem
     );
 
-    scheduleNext(
-      item.duration_seconds
+    el.addEventListener(
+      "error",
+      () => {
+
+        setDebug(
+          "Video failed to load. Check file URL and bucket visibility."
+        );
+
+        scheduleNext(
+          3
+        );
+      }
     );
 
     el.play().catch(() => {
-      scheduleNext(
-        item.duration_seconds
+
+      setDebug(
+        "Video autoplay was blocked or delayed. Trying next item after duration."
       );
     });
+
+    scheduleNext(
+      item.duration_seconds
+    );
 
   }else if(isPdf(item.file_type)){
 
@@ -331,7 +545,9 @@ function showItem(index){
     el.className =
       "media";
 
-    stage.appendChild(el);
+    stage.appendChild(
+      el
+    );
 
     scheduleNext(
       item.duration_seconds
@@ -348,6 +564,9 @@ function showItem(index){
     link.target =
       "_blank";
 
+    link.rel =
+      "noopener noreferrer";
+
     link.innerText =
       item.title || "Open file";
 
@@ -357,7 +576,9 @@ function showItem(index){
     link.style.fontSize =
       "2rem";
 
-    stage.appendChild(link);
+    stage.appendChild(
+      link
+    );
 
     scheduleNext(
       item.duration_seconds
@@ -365,96 +586,75 @@ function showItem(index){
   }
 }
 
-function scheduleNext(seconds){
+/* =========================
+   REALTIME REFRESH
+========================= */
 
-  const safeSeconds =
-    Math.max(
-      1,
-      Number(seconds || 10)
-    );
+function startRealtimeRefresh(){
 
-  timer =
-    setTimeout(
-      nextItem,
-      safeSeconds * 1000
-    );
+  realtimeChannel =
+    supabase
+      .channel("playlist-items-live-refresh")
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"playlist_items"
+        },
+        async payload => {
+
+          setDebug(
+            "Playlist changed. Refreshing..."
+          );
+
+          await loadPlaylist({
+            restart:true,
+            keepCurrent:true
+          });
+        }
+      )
+      .subscribe(status => {
+
+        if(status === "SUBSCRIBED"){
+
+          setDebug(
+            "Realtime connected. Waiting for playlist changes..."
+          );
+
+        }else{
+
+          setDebug(
+            "Realtime status: " + status
+          );
+        }
+      });
 }
 
-function nextItem(){
-
-  clearTimer();
-
-  if(!playlist.length){
-    return;
-  }
-
-  currentIndex =
-    (currentIndex + 1) % playlist.length;
-
-  showItem(
-    currentIndex
-  );
-}
+/* =========================
+   BACKUP REFRESH
+========================= */
 
 setInterval(
-  async () => {
+  () => {
 
-    const oldLength =
-      playlist.length;
-
-    const oldId =
-      playlist[currentIndex]?.id;
-
-    const { data, error } =
-      await supabase
-        .from("playlist_items")
-        .select("*")
-        .eq("is_active",true)
-        .order(
-          "sort_order",
-          {
-            ascending:true
-          }
-        );
-
-    if(error){
-      return;
-    }
-
-    playlist =
-      data || [];
-
-    if(!playlist.length){
-
-      showEmpty(
-        "No active playlist items."
-      );
-
-      return;
-    }
-
-    const newIndex =
-      playlist.findIndex(
-        item => item.id === oldId
-      );
-
-    if(newIndex !== -1){
-      currentIndex = newIndex;
-    }else if(currentIndex >= playlist.length){
-      currentIndex = 0;
-    }
-
-    if(oldLength === 0){
-      showItem(
-        currentIndex
-      );
-    }
-
+    loadPlaylist({
+      restart:false,
+      keepCurrent:true
+    });
   },
   30000
 );
 
-loadPlaylist();
+/* =========================
+   START
+========================= */
+
+loadPlaylist({
+  restart:true
+});
+
+startRealtimeRefresh();
 </script>
 
 </body>
