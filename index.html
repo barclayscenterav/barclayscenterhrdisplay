@@ -49,52 +49,6 @@ iframe.media{
   line-height:1.35;
 }
 
-#overlay{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:18px 28px;
-  background:linear-gradient(
-    to top,
-    rgba(0,0,0,0.75),
-    rgba(0,0,0,0)
-  );
-  display:flex;
-  justify-content:space-between;
-  gap:20px;
-  align-items:flex-end;
-  pointer-events:none;
-}
-
-#title{
-  font-size:1.6rem;
-  font-weight:900;
-  text-transform:uppercase;
-  text-shadow:0 2px 8px rgba(0,0,0,0.8);
-}
-
-#counter{
-  font-size:1rem;
-  color:#cbd5e1;
-  font-weight:bold;
-  text-shadow:0 2px 8px rgba(0,0,0,0.8);
-}
-
-#debug{
-  position:fixed;
-  top:10px;
-  left:10px;
-  background:rgba(0,0,0,0.7);
-  color:#cbd5e1;
-  font-size:13px;
-  padding:8px 10px;
-  border-radius:8px;
-  z-index:10;
-  max-width:90vw;
-  word-break:break-word;
-}
-
 .hidden{
   display:none !important;
 }
@@ -108,13 +62,6 @@ iframe.media{
     Loading playlist...
   </div>
 </div>
-
-<div id="overlay" class="hidden">
-  <div id="title"></div>
-  <div id="counter"></div>
-</div>
-
-<div id="debug"></div>
 
 <script type="module">
 import {
@@ -148,18 +95,6 @@ const supabase =
 const stage =
   document.getElementById("stage");
 
-const overlay =
-  document.getElementById("overlay");
-
-const titleEl =
-  document.getElementById("title");
-
-const counter =
-  document.getElementById("counter");
-
-const debug =
-  document.getElementById("debug");
-
 /* =========================
    STATE
 ========================= */
@@ -182,12 +117,6 @@ let realtimeChannel =
 /* =========================
    HELPERS
 ========================= */
-
-function setDebug(message){
-
-  debug.innerText =
-    message || "";
-}
 
 function isImage(fileType){
 
@@ -232,10 +161,6 @@ function showEmpty(message){
 
   stage.appendChild(
     div
-  );
-
-  overlay.classList.add(
-    "hidden"
   );
 }
 
@@ -290,10 +215,6 @@ async function loadPlaylist(options = {}){
   const oldId =
     playlist[currentIndex]?.id || null;
 
-  setDebug(
-    "Checking playlist..."
-  );
-
   const result =
     await supabase
       .from("playlist_items")
@@ -309,13 +230,7 @@ async function loadPlaylist(options = {}){
   if(result.error){
 
     showEmpty(
-      "Playlist error:\n" +
-      result.error.message +
-      "\n\nCheck Supabase RLS policy, anon/publishable key, and table name."
-    );
-
-    setDebug(
-      "Error: " + result.error.message
+      "Playlist error. Check Supabase setup."
     );
 
     return;
@@ -324,14 +239,10 @@ async function loadPlaylist(options = {}){
   playlist =
     result.data || [];
 
-  setDebug(
-    "Active playlist items found: " + playlist.length
-  );
-
   if(!playlist.length){
 
     showEmpty(
-      "No active playlist items.\n\nCheck that at least one item in Supabase has is_active = true."
+      "No active playlist items."
     );
 
     return;
@@ -404,23 +315,6 @@ function showItem(index){
   stage.innerHTML =
     "";
 
-  overlay.classList.remove(
-    "hidden"
-  );
-
-  titleEl.innerText =
-    item.title || "";
-
-  counter.innerText =
-    `${index + 1} / ${playlist.length}`;
-
-  setDebug(
-    "Playing: " +
-    (item.title || "Untitled") +
-    " | " +
-    (item.file_type || "unknown type")
-  );
-
   let el;
 
   if(isImage(item.file_type)){
@@ -432,26 +326,13 @@ function showItem(index){
       item.public_url;
 
     el.alt =
-      item.title || "Playlist image";
+      "";
 
     el.className =
       "media";
 
-    el.onload =
-      () => {
-
-        setDebug(
-          "Playing image: " +
-          (item.title || "Untitled")
-        );
-      };
-
     el.onerror =
       () => {
-
-        setDebug(
-          "Image failed to load. Check that the hr-content bucket is public."
-        );
 
         scheduleNext(
           3
@@ -494,17 +375,6 @@ function showItem(index){
     );
 
     el.addEventListener(
-      "loadeddata",
-      () => {
-
-        setDebug(
-          "Playing video: " +
-          (item.title || "Untitled")
-        );
-      }
-    );
-
-    el.addEventListener(
       "ended",
       nextItem
     );
@@ -513,22 +383,13 @@ function showItem(index){
       "error",
       () => {
 
-        setDebug(
-          "Video failed to load. Check file URL and bucket visibility."
-        );
-
         scheduleNext(
           3
         );
       }
     );
 
-    el.play().catch(() => {
-
-      setDebug(
-        "Video autoplay was blocked or delayed. Trying next item after duration."
-      );
-    });
+    el.play().catch(() => {});
 
     scheduleNext(
       item.duration_seconds
@@ -555,33 +416,8 @@ function showItem(index){
 
   }else{
 
-    const link =
-      document.createElement("a");
-
-    link.href =
-      item.public_url;
-
-    link.target =
-      "_blank";
-
-    link.rel =
-      "noopener noreferrer";
-
-    link.innerText =
-      item.title || "Open file";
-
-    link.style.color =
-      "#38bdf8";
-
-    link.style.fontSize =
-      "2rem";
-
-    stage.appendChild(
-      link
-    );
-
     scheduleNext(
-      item.duration_seconds
+      3
     );
   }
 }
@@ -604,31 +440,13 @@ function startRealtimeRefresh(){
         },
         async payload => {
 
-          setDebug(
-            "Playlist changed. Refreshing..."
-          );
-
           await loadPlaylist({
             restart:true,
             keepCurrent:true
           });
         }
       )
-      .subscribe(status => {
-
-        if(status === "SUBSCRIBED"){
-
-          setDebug(
-            "Realtime connected. Waiting for playlist changes..."
-          );
-
-        }else{
-
-          setDebug(
-            "Realtime status: " + status
-          );
-        }
-      });
+      .subscribe();
 }
 
 /* =========================
