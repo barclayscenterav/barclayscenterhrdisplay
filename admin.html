@@ -88,7 +88,7 @@ input[type="file"]{
 
 .code-row{
   display:grid;
-  grid-template-columns:1fr 110px;
+  grid-template-columns:1fr 130px 110px;
   gap:10px;
 }
 
@@ -141,6 +141,24 @@ button:disabled{
 
 .success:hover{
   background:#15803d;
+}
+
+#codeStatus{
+  min-height:24px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+#codeStatus.good{
+  color:#22c55e;
+}
+
+#codeStatus.bad{
+  color:#f87171;
+}
+
+#codeStatus.neutral{
+  color:#cbd5e1;
 }
 
 #status{
@@ -300,9 +318,17 @@ button:disabled{
           placeholder="Enter shared upload code"
         >
 
+        <button id="checkCodeButton" class="success" type="button">
+          Check Code
+        </button>
+
         <button id="toggleCodeButton" class="secondary" type="button">
           Show
         </button>
+      </div>
+
+      <div id="codeStatus" class="neutral">
+        Code not checked.
       </div>
     </div>
 
@@ -405,8 +431,14 @@ const REQUIRED_HEIGHT =
 const adminCodeInput =
   document.getElementById("adminCode");
 
+const checkCodeButton =
+  document.getElementById("checkCodeButton");
+
 const toggleCodeButton =
   document.getElementById("toggleCodeButton");
+
+const codeStatus =
+  document.getElementById("codeStatus");
 
 const titleInput =
   document.getElementById("titleInput");
@@ -441,6 +473,9 @@ const statusEl =
 let sortable =
   null;
 
+let codeIsValid =
+  false;
+
 function getAdminCode(){
 
   return adminCodeInput.value.trim();
@@ -453,6 +488,51 @@ function setStatus(message,type){
 
   statusEl.className =
     type || "";
+}
+
+function setCodeStatus(message,type){
+
+  codeStatus.innerText =
+    message;
+
+  codeStatus.className =
+    type || "neutral";
+}
+
+function resetCodeValidation(){
+
+  codeIsValid =
+    false;
+
+  setCodeStatus(
+    "Code not checked.",
+    "neutral"
+  );
+}
+
+function requireValidCode(){
+
+  if(!getAdminCode()){
+
+    setCodeStatus(
+      "Enter the shared HR upload code first.",
+      "bad"
+    );
+
+    return false;
+  }
+
+  if(!codeIsValid){
+
+    setCodeStatus(
+      "Click Check Code before loading or uploading.",
+      "bad"
+    );
+
+    return false;
+  }
+
+  return true;
 }
 
 function toggleCodeVisibility(){
@@ -501,6 +581,60 @@ async function adminAction(payload){
   }
 
   return data;
+}
+
+async function checkCode(){
+
+  if(!getAdminCode()){
+
+    codeIsValid =
+      false;
+
+    setCodeStatus(
+      "Enter the shared HR upload code first.",
+      "bad"
+    );
+
+    return;
+  }
+
+  checkCodeButton.disabled =
+    true;
+
+  setCodeStatus(
+    "Checking code...",
+    "neutral"
+  );
+
+  try{
+
+    await adminAction({
+      action:"validate"
+    });
+
+    codeIsValid =
+      true;
+
+    setCodeStatus(
+      "Code correct. You can now load the playlist or upload content.",
+      "good"
+    );
+
+  }catch(error){
+
+    codeIsValid =
+      false;
+
+    setCodeStatus(
+      "Code incorrect. Please check and try again.",
+      "bad"
+    );
+
+  }finally{
+
+    checkCodeButton.disabled =
+      false;
+  }
 }
 
 function isImage(fileType){
@@ -815,6 +949,10 @@ function renderItem(item){
     "click",
     async () => {
 
+      if(!requireValidCode()){
+        return;
+      }
+
       try{
 
         await adminAction({
@@ -854,6 +992,10 @@ function renderItem(item){
   deleteButton.addEventListener(
     "click",
     async () => {
+
+      if(!requireValidCode()){
+        return;
+      }
 
       const ok =
         confirm(
@@ -937,13 +1079,7 @@ function renderPlaylist(items){
 
 async function loadPlaylist(){
 
-  if(!getAdminCode()){
-
-    setStatus(
-      "Enter the shared HR upload code first.",
-      "bad"
-    );
-
+  if(!requireValidCode()){
     return;
   }
 
@@ -974,13 +1110,7 @@ async function loadPlaylist(){
 
 async function uploadFile(){
 
-  if(!getAdminCode()){
-
-    setStatus(
-      "Enter the shared HR upload code first.",
-      "bad"
-    );
-
+  if(!requireValidCode()){
     return;
   }
 
@@ -1131,6 +1261,10 @@ async function uploadFile(){
 
 async function saveOrder(){
 
+  if(!requireValidCode()){
+    return;
+  }
+
   const ids =
     Array
       .from(
@@ -1174,6 +1308,16 @@ async function saveOrder(){
 
 function rememberCodeThisSession(){
 
+  if(!getAdminCode()){
+
+    setCodeStatus(
+      "Enter the shared HR upload code first.",
+      "bad"
+    );
+
+    return;
+  }
+
   sessionStorage.setItem(
     "hrAdminCode",
     getAdminCode()
@@ -1188,6 +1332,16 @@ function rememberCodeThisSession(){
 toggleCodeButton.addEventListener(
   "click",
   toggleCodeVisibility
+);
+
+checkCodeButton.addEventListener(
+  "click",
+  checkCode
+);
+
+adminCodeInput.addEventListener(
+  "input",
+  resetCodeValidation
 );
 
 uploadButton.addEventListener(
@@ -1277,7 +1431,10 @@ if(savedCode){
   adminCodeInput.value =
     savedCode;
 
-  loadPlaylist();
+  setCodeStatus(
+    "Saved code found. Click Check Code to verify it.",
+    "neutral"
+  );
 }
 </script>
 
