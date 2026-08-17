@@ -11,23 +11,39 @@
   box-sizing:border-box;
 }
 
+html,
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#020617;
-  color:white;
-  width:100vw;
-  height:100vh;
+  padding:0;
+  width:100%;
+  height:100%;
   overflow:hidden;
+  background:#020617;
+  font-family:Arial,sans-serif;
 }
 
 #stage{
   position:fixed;
   inset:0;
   background:#020617;
+  overflow:hidden;
+}
+
+.layer{
+  position:absolute;
+  inset:0;
+  background:#020617;
   display:flex;
   align-items:center;
   justify-content:center;
+  opacity:0;
+  transition:opacity 0.6s ease;
+  z-index:1;
+}
+
+.layer.active{
+  opacity:1;
+  z-index:2;
 }
 
 .media{
@@ -35,6 +51,7 @@ body{
   height:100%;
   object-fit:contain;
   background:#020617;
+  display:block;
 }
 
 iframe.media{
@@ -42,11 +59,18 @@ iframe.media{
 }
 
 #empty{
-  text-align:center;
+  position:fixed;
+  inset:0;
+  background:#020617;
   color:#cbd5e1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
   font-size:2rem;
   padding:30px;
   line-height:1.35;
+  z-index:10;
 }
 
 .hidden{
@@ -58,9 +82,12 @@ iframe.media{
 <body>
 
 <div id="stage">
-  <div id="empty">
-    Loading playlist...
-  </div>
+  <div id="layerA" class="layer active"></div>
+  <div id="layerB" class="layer"></div>
+</div>
+
+<div id="empty">
+  Loading playlist...
 </div>
 
 <script type="module">
@@ -92,8 +119,14 @@ const supabase =
    ELEMENTS
 ========================= */
 
-const stage =
-  document.getElementById("stage");
+const layerA =
+  document.getElementById("layerA");
+
+const layerB =
+  document.getElementById("layerB");
+
+const empty =
+  document.getElementById("empty");
 
 /* =========================
    STATE
@@ -105,10 +138,19 @@ let playlist =
 let currentIndex =
   0;
 
+let activeLayer =
+  layerA;
+
+let standbyLayer =
+  layerB;
+
 let timer =
   null;
 
 let hasStarted =
+  false;
+
+let isSwitching =
   false;
 
 let realtimeChannel =
@@ -143,24 +185,22 @@ function clearTimer(){
   }
 }
 
+function hideEmpty(){
+
+  empty.classList.add(
+    "hidden"
+  );
+}
+
 function showEmpty(message){
 
   clearTimer();
 
-  stage.innerHTML =
-    "";
-
-  const div =
-    document.createElement("div");
-
-  div.id =
-    "empty";
-
-  div.innerText =
+  empty.innerText =
     message;
 
-  stage.appendChild(
-    div
+  empty.classList.remove(
+    "hidden"
   );
 }
 
@@ -177,6 +217,277 @@ function scheduleNext(seconds){
       nextItem,
       safeSeconds * 1000
     );
+}
+
+function swapLayers(){
+
+  standbyLayer.classList.add(
+    "active"
+  );
+
+  activeLayer.classList.remove(
+    "active"
+  );
+
+  const oldLayer =
+    activeLayer;
+
+  activeLayer =
+    standbyLayer;
+
+  standbyLayer =
+    oldLayer;
+
+  setTimeout(
+    () => {
+
+      standbyLayer.innerHTML =
+        "";
+
+    },
+    700
+  );
+}
+
+/* =========================
+   MEDIA CREATION
+========================= */
+
+function createImageElement(item){
+
+  return new Promise(resolve => {
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      item.public_url;
+
+    img.alt =
+      "";
+
+    img.className =
+      "media";
+
+    img.onload =
+      () => resolve(img);
+
+    img.onerror =
+      () => resolve(null);
+  });
+}
+
+function createVideoElement(item){
+
+  return new Promise(resolve => {
+
+    const video =
+      document.createElement("video");
+
+    video.src =
+      item.public_url;
+
+    video.className =
+      "media";
+
+    video.autoplay =
+      true;
+
+    video.muted =
+      true;
+
+    video.playsInline =
+      true;
+
+    video.controls =
+      false;
+
+    video.preload =
+      "auto";
+
+    let resolved =
+      false;
+
+    function finish(){
+
+      if(resolved){
+        return;
+      }
+
+      resolved =
+        true;
+
+      resolve(video);
+    }
+
+    video.addEventListener(
+      "loadeddata",
+      finish,
+      {
+        once:true
+      }
+    );
+
+    video.addEventListener(
+      "canplay",
+      finish,
+      {
+        once:true
+      }
+    );
+
+    video.addEventListener(
+      "error",
+      () => resolve(null),
+      {
+        once:true
+      }
+    );
+
+    setTimeout(
+      finish,
+      2000
+    );
+
+    video.load();
+  });
+}
+
+function createPdfElement(item){
+
+  return new Promise(resolve => {
+
+    const iframe =
+      document.createElement("iframe");
+
+    iframe.src =
+      item.public_url;
+
+    iframe.className =
+      "media";
+
+    iframe.onload =
+      () => resolve(iframe);
+
+    setTimeout(
+      () => resolve(iframe),
+      800
+    );
+  });
+}
+
+async function createMediaElement(item){
+
+  if(isImage(item.file_type)){
+
+    return await createImageElement(
+      item
+    );
+  }
+
+  if(isVideo(item.file_type)){
+
+    return await createVideoElement(
+      item
+    );
+  }
+
+  if(isPdf(item.file_type)){
+
+    return await createPdfElement(
+      item
+    );
+  }
+
+  return null;
+}
+
+/* =========================
+   PLAYBACK
+========================= */
+
+async function showItem(index){
+
+  if(isSwitching){
+    return;
+  }
+
+  clearTimer();
+
+  if(!playlist.length){
+
+    showEmpty(
+      "No active playlist items."
+    );
+
+    return;
+  }
+
+  const item =
+    playlist[index];
+
+  if(!item){
+
+    showEmpty(
+      "Playlist item could not be loaded."
+    );
+
+    return;
+  }
+
+  isSwitching =
+    true;
+
+  const mediaElement =
+    await createMediaElement(
+      item
+    );
+
+  if(!mediaElement){
+
+    isSwitching =
+      false;
+
+    scheduleNext(
+      3
+    );
+
+    return;
+  }
+
+  standbyLayer.innerHTML =
+    "";
+
+  standbyLayer.appendChild(
+    mediaElement
+  );
+
+  hideEmpty();
+
+  swapLayers();
+
+  if(isVideo(item.file_type)){
+
+    mediaElement.currentTime =
+      0;
+
+    mediaElement.play().catch(() => {});
+
+    mediaElement.addEventListener(
+      "ended",
+      nextItem,
+      {
+        once:true
+      }
+    );
+  }
+
+  scheduleNext(
+    item.duration_seconds
+  );
+
+  isSwitching =
+    false;
 }
 
 function nextItem(){
@@ -284,145 +595,6 @@ async function loadPlaylist(options = {}){
 }
 
 /* =========================
-   SHOW ITEM
-========================= */
-
-function showItem(index){
-
-  clearTimer();
-
-  if(!playlist.length){
-
-    showEmpty(
-      "No active playlist items."
-    );
-
-    return;
-  }
-
-  const item =
-    playlist[index];
-
-  if(!item){
-
-    showEmpty(
-      "Playlist item could not be loaded."
-    );
-
-    return;
-  }
-
-  stage.innerHTML =
-    "";
-
-  let el;
-
-  if(isImage(item.file_type)){
-
-    el =
-      document.createElement("img");
-
-    el.src =
-      item.public_url;
-
-    el.alt =
-      "";
-
-    el.className =
-      "media";
-
-    el.onerror =
-      () => {
-
-        scheduleNext(
-          3
-        );
-      };
-
-    stage.appendChild(
-      el
-    );
-
-    scheduleNext(
-      item.duration_seconds
-    );
-
-  }else if(isVideo(item.file_type)){
-
-    el =
-      document.createElement("video");
-
-    el.src =
-      item.public_url;
-
-    el.className =
-      "media";
-
-    el.autoplay =
-      true;
-
-    el.muted =
-      true;
-
-    el.playsInline =
-      true;
-
-    el.controls =
-      false;
-
-    stage.appendChild(
-      el
-    );
-
-    el.addEventListener(
-      "ended",
-      nextItem
-    );
-
-    el.addEventListener(
-      "error",
-      () => {
-
-        scheduleNext(
-          3
-        );
-      }
-    );
-
-    el.play().catch(() => {});
-
-    scheduleNext(
-      item.duration_seconds
-    );
-
-  }else if(isPdf(item.file_type)){
-
-    el =
-      document.createElement("iframe");
-
-    el.src =
-      item.public_url;
-
-    el.className =
-      "media";
-
-    stage.appendChild(
-      el
-    );
-
-    scheduleNext(
-      item.duration_seconds
-    );
-
-  }else{
-
-    scheduleNext(
-      3
-    );
-  }
-}
-
-/* =========================
    REALTIME REFRESH
 ========================= */
 
@@ -438,7 +610,7 @@ function startRealtimeRefresh(){
           schema:"public",
           table:"playlist_items"
         },
-        async payload => {
+        async () => {
 
           await loadPlaylist({
             restart:true,
