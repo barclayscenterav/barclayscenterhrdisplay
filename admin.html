@@ -86,10 +86,11 @@ input[type="file"]{
   color:#0f172a;
 }
 
-.code-row{
+.code-input-row{
   display:grid;
-  grid-template-columns:1fr 130px 110px;
+  grid-template-columns:minmax(0,1fr) 110px;
   gap:10px;
+  align-items:center;
 }
 
 button{
@@ -272,10 +273,6 @@ button:disabled{
     grid-template-columns:1fr;
   }
 
-  .code-row{
-    grid-template-columns:1fr;
-  }
-
   .item{
     grid-template-columns:1fr;
   }
@@ -311,19 +308,21 @@ button:disabled{
     <div class="field">
       <label for="adminCode">Shared HR Upload Code</label>
 
-      <div class="code-row">
+      <div class="code-input-row">
         <input
           id="adminCode"
           type="password"
           placeholder="Enter shared upload code"
         >
 
-        <button id="checkCodeButton" class="success" type="button">
-          Check Code
-        </button>
-
         <button id="toggleCodeButton" class="secondary" type="button">
           Show
+        </button>
+      </div>
+
+      <div class="button-row">
+        <button id="checkCodeButton" class="success" type="button">
+          Check Code
         </button>
       </div>
 
