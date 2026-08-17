@@ -1,1 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>HR Playlist Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0f172a;
+  color:white;
+  min-height:100vh;
+}
+
+header{
+  padding:32px 20px 16px;
+  text-align:center;
+}
+
+h1{
+  margin:0;
+  font-size:2.5rem;
+  text-transform:uppercase;
+}
+
+.subtitle{
+  color:#cbd5e1;
+  margin-top:8px;
+}
+
+main{
+  width:min(1200px,calc(100% - 32px));
+  margin:0 auto;
+  padding:20px 0 50px;
+}
+
+.card{
+  background:#1e293b;
+  border-radius:18px;
+  padding:22px;
+  margin-bottom:22px;
+}
+
+.card-title{
+  font-size:1.25rem;
+  font-weight:900;
+  margin-bottom:16px;
+  text-transform:uppercase;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+label{
+  color:#cbd5e1;
+  font-weight:bold;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  outline:none;
+}
+
+input[type="file"]{
+  background:white;
+  color:#0f172a;
+}
+
+button{
+  padding:14px 18px;
+  border:none;
+  border-radius:10px;
+  background:#3b82f6;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#2563eb;
+}
+
+button:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
+.button-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.secondary{
+  background:#475569;
+}
+
+.secondary:hover{
+  background:#334155;
+}
+
+.danger{
+  background:#dc2626;
+}
+
+.danger:hover{
+  background:#b91c1c;
+}
+
+.success{
+  background:#16a34a;
+}
+
+.success:hover{
+  background:#15803d;
+}
+
+#status{
+  min-height:26px;
+  text-align:center;
+  font-weight:bold;
+  margin-top:12px;
+}
+
+#status.good{
+  color:#22c55e;
+}
+
+#status.bad{
+  color:#f87171;
+}
+
+.playlist{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.item{
+  background:#0f172a;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:90px 1fr;
+  gap:14px;
+  align-items:center;
+}
+
+.item.dragging{
+  opacity:0.5;
+}
+
+.handle{
+  cursor:grab;
+  background:#334155;
+  color:white;
+  border-radius:10px;
+  padding:10px;
+  text-align:center;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.preview{
+  width:90px;
+  height:70px;
+  border-radius:10px;
+  background:#020617;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#94a3b8;
+  font-size:13px;
+  text-align:center;
+}
+
+.preview img,
+.preview video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.item-controls{
+  display:grid;
+  grid-template-columns:1fr 120px 120px;
+  gap:10px;
+  align-items:end;
+}
+
+.checkbox-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#cbd5e1;
+  font-weight:bold;
+  justify-content:center;
+}
+
+.checkbox-row input{
+  width:auto;
+}
+
+.item-actions{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.empty{
+  color:#94a3b8;
+  text-align:center;
+  padding:30px;
+}
+
+@media(max-width:800px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .item{
+    grid-template-columns:1fr;
+  }
+
+  .preview{
+    width:100%;
+    height:160px;
+  }
+
+  .item-controls{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>HR Playlist Admin</h1>
+  <div class="subtitle">
+    Upload, reorder, publish, hide, and delete display content.
+  </div>
+</header>
+
+<main>
+
+  <section class="card">
+    <div class="card-title">
+      Admin Access
+    </div>
+
+    <div class="field">
+      <label for="adminCode">Shared HR Upload Code</label>
+      <input
+        id="adminCode"
+        type="password"
+        placeholder="Enter shared upload code"
+      >
+    </div>
+
+    <div class="button-row">
+      <button id="loadButton">
+        Load Playlist
+      </button>
+
+      <button id="rememberButton" class="secondary">
+        Remember Code This Session
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-title">
+      Upload Content
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="titleInput">Title</label>
+        <input
+          id="titleInput"
+          placeholder="Example: Benefits fair, welcome slide, HR announcement"
+        >
+      </div>
+
+      <div class="field">
+        <label for="durationInput">Duration Seconds</label>
+        <input
+          id="durationInput"
+          type="number"
+          min="1"
+          value="10"
+        >
+      </div>
+
+      <div class="field">
+        <label for="fileInput">File</label>
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,application/pdf"
+        >
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button id="uploadButton" class="success">
+        Upload
+      </button>
+    </div>
+
+    <div id="status"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-title">
+      Playlist Order
+    </div>
+
+    <div class="button-row">
+      <button id="saveOrderButton" class="success">
+        Save Playlist Order
+      </button>
+
+      <button id="refreshButton" class="secondary">
+        Refresh
+      </button>
+    </div>
+
+    <div id="playlist" class="playlist"></div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+<script>
+const SUPABASE_URL =
+  "YOUR_SUPABASE_URL";
+
+const SUPABASE_ANON_KEY =
+  "YOUR_SUPABASE_ANON_KEY";
+
+const FUNCTION_URL =
+  SUPABASE_URL + "/functions/v1/hr-admin";
+
+const adminCodeInput =
+  document.getElementById("adminCode");
+
+const titleInput =
+  document.getElementById("titleInput");
+
+const durationInput =
+  document.getElementById("durationInput");
+
+const fileInput =
+  document.getElementById("fileInput");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const loadButton =
+  document.getElementById("loadButton");
+
+const rememberButton =
+  document.getElementById("rememberButton");
+
+const saveOrderButton =
+  document.getElementById("saveOrderButton");
+
+const refreshButton =
+  document.getElementById("refreshButton");
+
+const playlist =
+  document.getElementById("playlist");
+
+const statusEl =
+  document.getElementById("status");
+
+let sortable =
+  null;
+
+function getAdminCode(){
+
+  return adminCodeInput.value.trim();
+}
+
+function setStatus(message,type){
+
+  statusEl.innerText =
+    message;
+
+  statusEl.className =
+    type || "";
+}
+
+function getHeaders(){
+
+  return {
+    "apikey":SUPABASE_ANON_KEY,
+    "Authorization":"Bearer " + SUPABASE_ANON_KEY,
+    "Content-Type":"application/json"
+  };
+}
+
+async function adminAction(payload){
+
+  const response =
+    await fetch(
+      FUNCTION_URL,
+      {
+        method:"POST",
+        headers:getHeaders(),
+        body:JSON.stringify({
+          ...payload,
+          adminCode:getAdminCode()
+        })
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if(!response.ok || data.error){
+    throw new Error(
+      data.error || "Request failed."
+    );
+  }
+
+  return data;
+}
+
+function isImage(fileType){
+
+  return fileType &&
+    fileType.startsWith("image/");
+}
+
+function isVideo(fileType){
+
+  return fileType &&
+    fileType.startsWith("video/");
+}
+
+function renderPreview(item){
+
+  const preview =
+    document.createElement("div");
+
+  preview.className =
+    "preview";
+
+  if(isImage(item.file_type)){
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      item.public_url;
+
+    img.alt =
+      item.title || "Image";
+
+    preview.appendChild(img);
+
+  }else if(isVideo(item.file_type)){
+
+    const video =
+      document.createElement("video");
+
+    video.src =
+      item.public_url;
+
+    video.muted =
+      true;
+
+    preview.appendChild(video);
+
+  }else{
+
+    preview.innerText =
+      "PDF";
+  }
+
+  return preview;
+}
+
+function renderItem(item){
+
+  const row =
+    document.createElement("div");
+
+  row.className =
+    "item";
+
+  row.dataset.id =
+    item.id;
+
+  const left =
+    document.createElement("div");
+
+  const handle =
+    document.createElement("div");
+
+  handle.className =
+    "handle";
+
+  handle.innerText =
+    "DRAG";
+
+  left.appendChild(handle);
+  left.appendChild(renderPreview(item));
+
+  const right =
+    document.createElement("div");
+
+  const controls =
+    document.createElement("div");
+
+  controls.className =
+    "item-controls";
+
+  const titleField =
+    document.createElement("div");
+
+  titleField.className =
+    "field";
+
+  const titleLabel =
+    document.createElement("label");
+
+  titleLabel.innerText =
+    "Title";
+
+  const titleBox =
+    document.createElement("input");
+
+  titleBox.value =
+    item.title || "";
+
+  titleBox.className =
+    "item-title-input";
+
+  titleField.appendChild(titleLabel);
+  titleField.appendChild(titleBox);
+
+  const durationField =
+    document.createElement("div");
+
+  durationField.className =
+    "field";
+
+  const durationLabel =
+    document.createElement("label");
+
+  durationLabel.innerText =
+    "Seconds";
+
+  const durationBox =
+    document.createElement("input");
+
+  durationBox.type =
+    "number";
+
+  durationBox.min =
+    "1";
+
+  durationBox.value =
+    item.duration_seconds || 10;
+
+  durationBox.className =
+    "item-duration-input";
+
+  durationField.appendChild(durationLabel);
+  durationField.appendChild(durationBox);
+
+  const activeField =
+    document.createElement("div");
+
+  activeField.className =
+    "checkbox-row";
+
+  const activeBox =
+    document.createElement("input");
+
+  activeBox.type =
+    "checkbox";
+
+  activeBox.checked =
+    Boolean(item.is_active);
+
+  activeBox.className =
+    "item-active-input";
+
+  const activeLabel =
+    document.createElement("span");
+
+  activeLabel.innerText =
+    "Published";
+
+  activeField.appendChild(activeBox);
+  activeField.appendChild(activeLabel);
+
+  controls.appendChild(titleField);
+  controls.appendChild(durationField);
+  controls.appendChild(activeField);
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "item-actions";
+
+  const saveButton =
+    document.createElement("button");
+
+  saveButton.innerText =
+    "Save Item";
+
+  saveButton.className =
+    "success";
+
+  saveButton.addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        await adminAction({
+          action:"update",
+          id:item.id,
+          title:titleBox.value,
+          durationSeconds:durationBox.value,
+          isActive:activeBox.checked
+        });
+
+        setStatus(
+          "Item saved.",
+          "good"
+        );
+
+        await loadPlaylist();
+
+      }catch(error){
+
+        setStatus(
+          error.message,
+          "bad"
+        );
+      }
+    }
+  );
+
+  const deleteButton =
+    document.createElement("button");
+
+  deleteButton.innerText =
+    "Delete";
+
+  deleteButton.className =
+    "danger";
+
+  deleteButton.addEventListener(
+    "click",
+    async () => {
+
+      const ok =
+        confirm(
+          "Delete this item from the playlist?"
+        );
+
+      if(!ok){
+        return;
+      }
+
+      try{
+
+        await adminAction({
+          action:"delete",
+          id:item.id
+        });
+
+        setStatus(
+          "Item deleted.",
+          "good"
+        );
+
+        await loadPlaylist();
+
+      }catch(error){
+
+        setStatus(
+          error.message,
+          "bad"
+        );
+      }
+    }
+  );
+
+  actions.appendChild(saveButton);
+  actions.appendChild(deleteButton);
+
+  right.appendChild(controls);
+  right.appendChild(actions);
+
+  row.appendChild(left);
+  row.appendChild(right);
+
+  return row;
+}
+
+function renderPlaylist(items){
+
+  playlist.innerHTML =
+    "";
+
+  if(!items.length){
+
+    playlist.innerHTML =
+      '<div class="empty">No playlist items yet.</div>';
+
+    return;
+  }
+
+  items.forEach(item => {
+
+    playlist.appendChild(
+      renderItem(item)
+    );
+  });
+
+  if(sortable){
+    sortable.destroy();
+  }
+
+  sortable =
+    new Sortable(
+      playlist,
+      {
+        animation:150,
+        handle:".handle",
+        ghostClass:"dragging"
+      }
+    );
+}
+
+async function loadPlaylist(){
+
+  if(!getAdminCode()){
+
+    setStatus(
+      "Enter the shared HR upload code first.",
+      "bad"
+    );
+
+    return;
+  }
+
+  try{
+
+    const data =
+      await adminAction({
+        action:"list"
+      });
+
+    renderPlaylist(
+      data.items || []
+    );
+
+    setStatus(
+      "Playlist loaded.",
+      "good"
+    );
+
+  }catch(error){
+
+    setStatus(
+      error.message,
+      "bad"
+    );
+  }
+}
+
+async function uploadFile(){
+
+  if(!getAdminCode()){
+
+    setStatus(
+      "Enter the shared HR upload code first.",
+      "bad"
+    );
+
+    return;
+  }
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+
+    setStatus(
+      "Choose a file first.",
+      "bad"
+    );
+
+    return;
+  }
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "action",
+    "upload"
+  );
+
+  formData.append(
+    "adminCode",
+    getAdminCode()
+  );
+
+  formData.append(
+    "title",
+    titleInput.value.trim()
+  );
+
+  formData.append(
+    "durationSeconds",
+    durationInput.value || "10"
+  );
+
+  formData.append(
+    "file",
+    file
+  );
+
+  uploadButton.disabled =
+    true;
+
+  setStatus(
+    "Uploading...",
+    ""
+  );
+
+  try{
+
+    const response =
+      await fetch(
+        FUNCTION_URL,
+        {
+          method:"POST",
+          headers:{
+            "apikey":SUPABASE_ANON_KEY,
+            "Authorization":"Bearer " + SUPABASE_ANON_KEY
+          },
+          body:formData
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(!response.ok || data.error){
+      throw new Error(
+        data.error || "Upload failed."
+      );
+    }
+
+    titleInput.value =
+      "";
+
+    durationInput.value =
+      "10";
+
+    fileInput.value =
+      "";
+
+    setStatus(
+      "Upload complete.",
+      "good"
+    );
+
+    await loadPlaylist();
+
+  }catch(error){
+
+    setStatus(
+      error.message,
+      "bad"
+    );
+
+  }finally{
+
+    uploadButton.disabled =
+      false;
+  }
+}
+
+async function saveOrder(){
+
+  const ids =
+    Array
+      .from(
+        playlist.querySelectorAll(".item")
+      )
+      .map(item => item.dataset.id)
+      .filter(Boolean);
+
+  if(!ids.length){
+
+    setStatus(
+      "No playlist items to save.",
+      "bad"
+    );
+
+    return;
+  }
+
+  try{
+
+    await adminAction({
+      action:"reorder",
+      order:ids
+    });
+
+    setStatus(
+      "Playlist order saved.",
+      "good"
+    );
+
+    await loadPlaylist();
+
+  }catch(error){
+
+    setStatus(
+      error.message,
+      "bad"
+    );
+  }
+}
+
+function rememberCodeThisSession(){
+
+  sessionStorage.setItem(
+    "hrAdminCode",
+    getAdminCode()
+  );
+
+  setStatus(
+    "Code remembered for this browser tab.",
+    "good"
+  );
+}
+
+uploadButton.addEventListener(
+  "click",
+  uploadFile
+);
+
+loadButton.addEventListener(
+  "click",
+  loadPlaylist
+);
+
+refreshButton.addEventListener(
+  "click",
+  loadPlaylist
+);
+
+saveOrderButton.addEventListener(
+  "click",
+  saveOrder
+);
+
+rememberButton.addEventListener(
+  "click",
+  rememberCodeThisSession
+);
+
+const savedCode =
+  sessionStorage.getItem(
+    "hrAdminCode"
+  );
+
+if(savedCode){
+
+  adminCodeInput.value =
+    savedCode;
+
+  loadPlaylist();
+}
+</script>
+
+</body>
+</html>
