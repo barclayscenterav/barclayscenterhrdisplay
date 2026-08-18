@@ -470,11 +470,11 @@ button:disabled{
             id="fileInput"
             type="file"
             multiple
-            accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
+            accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/quicktime,video/x-quicktime,.mov"
           >
 
           <div class="help">
-            You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
+            You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, MP4, and MOV.
           </div>
         </div>
       </div>
@@ -505,15 +505,6 @@ button:disabled{
         <button id="refreshButton" class="secondary">
           Refresh
         </button>
-
-        <a
-          class="button-link preview-link"
-          href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Preview Output
-        </a>
       </div>
 
       <div id="playlist" class="playlist"></div>
@@ -815,10 +806,24 @@ function isVideo(fileType){
     fileType.startsWith("video/");
 }
 
+function isMovFile(file){
+
+  const fileName =
+    file.name || "";
+
+  const fileType =
+    file.type || "";
+
+  return fileName.toLowerCase().endsWith(".mov") ||
+    fileType === "video/quicktime" ||
+    fileType === "video/x-quicktime";
+}
+
 function isAcceptedFile(file){
 
   return isImage(file.type) ||
-    isVideo(file.type);
+    isVideo(file.type) ||
+    isMovFile(file);
 }
 
 function isPublishedValue(value){
@@ -909,7 +914,7 @@ function getVideoDurationSeconds(file){
 
 async function getDurationForFile(file){
 
-  if(isVideo(file.type)){
+  if(isVideo(file.type) || isMovFile(file)){
 
     return await getVideoDurationSeconds(
       file
@@ -1224,7 +1229,7 @@ async function uploadSingleFile(file,index,total){
     throw new Error(
       "Unsupported file type: " +
       file.name +
-      ". Accepted files are PNG, JPG, WEBP, GIF, and MP4."
+      ". Accepted files are PNG, JPG, WEBP, GIF, MP4, and MOV."
     );
   }
 
@@ -1288,7 +1293,7 @@ async function uploadSingleFile(file,index,total){
     ": " +
     file.name;
 
-  if(isVideo(file.type)){
+  if(isVideo(file.type) || isMovFile(file)){
 
     uploadMessage =
       uploadMessage +
@@ -1556,7 +1561,7 @@ fileInput.addEventListener(
     if(unsupportedFiles.length){
 
       setStatus(
-        "Unsupported file selected. Accepted files are PNG, JPG, WEBP, GIF, and MP4.",
+        "Unsupported file selected. Accepted files are PNG, JPG, WEBP, GIF, MP4, and MOV.",
         "bad"
       );
 
@@ -1564,7 +1569,7 @@ fileInput.addEventListener(
     }
 
     const videoFiles =
-      files.filter(file => isVideo(file.type));
+      files.filter(file => isVideo(file.type) || isMovFile(file));
 
     if(videoFiles.length){
 
