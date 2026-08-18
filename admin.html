@@ -86,7 +86,6 @@ input[type="file"]{
   color:#0f172a;
 }
 
-/* ACCESS CODE ROW */
 .code-input-row{
   display:flex !important;
   flex-direction:row !important;
@@ -338,7 +337,7 @@ button:disabled{
 <body>
 
 <header>
-  <h1>HR Playlist Admin</h1>
+  <h1>Barclays Center - Employee Lounge Playlist Admin</h1>
   <div class="subtitle">
     Upload, reorder, publish, hide, and delete display content.
   </div>
@@ -691,6 +690,20 @@ function isVideo(fileType){
     fileType.startsWith("video/");
 }
 
+function isAcceptedFile(file){
+
+  return isImage(file.type) ||
+    isVideo(file.type);
+}
+
+function isPublishedValue(value){
+
+  return value === true ||
+    value === "true" ||
+    value === 1 ||
+    value === "1";
+}
+
 function getFileNameWithoutExtension(fileName){
 
   return fileName
@@ -926,7 +939,9 @@ function renderItem(item){
     "checkbox";
 
   activeBox.checked =
-    Boolean(item.is_active);
+    isPublishedValue(
+      item.is_active
+    );
 
   activeBox.className =
     "item-active-input";
@@ -1123,6 +1138,15 @@ async function loadPlaylist(){
 }
 
 async function uploadSingleFile(file,index,total){
+
+  if(!isAcceptedFile(file)){
+
+    throw new Error(
+      "Unsupported file type: " +
+      file.name +
+      ". Accepted files are PNG, JPG, WEBP, GIF, and MP4."
+    );
+  }
 
   const typedTitle =
     titleInput.value.trim();
@@ -1410,6 +1434,19 @@ fileInput.addEventListener(
       );
 
     if(!files.length){
+      return;
+    }
+
+    const unsupportedFiles =
+      files.filter(file => !isAcceptedFile(file));
+
+    if(unsupportedFiles.length){
+
+      setStatus(
+        "Unsupported file selected. Accepted files are PNG, JPG, WEBP, GIF, and MP4.",
+        "bad"
+      );
+
       return;
     }
 
