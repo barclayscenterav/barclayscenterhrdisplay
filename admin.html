@@ -19,6 +19,12 @@ body{
   min-height:100vh;
 }
 
+body.locked{
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
 header{
   padding:32px 20px 16px;
   text-align:center;
@@ -46,6 +52,11 @@ main{
   border-radius:18px;
   padding:22px;
   margin-bottom:22px;
+}
+
+.access-card{
+  width:min(620px,100%);
+  margin:0;
 }
 
 .card-title{
@@ -305,6 +316,10 @@ button:disabled{
   padding:30px;
 }
 
+.hidden{
+  display:none !important;
+}
+
 @media(max-width:800px){
   .grid{
     grid-template-columns:1fr;
@@ -353,150 +368,160 @@ button:disabled{
 </style>
 </head>
 
-<body>
+<body class="locked">
 
-<header>
-  <h1>Barclays Center - Employee Lounge Playlist Admin</h1>
-  <div class="subtitle">
-    Upload, reorder, publish, hide, delete, and preview display content.
+<section id="accessGate" class="card access-card">
+  <div class="card-title">
+    Barclays Center - Employee Lounge Playlist Admin
   </div>
-</header>
 
-<main>
+  <div class="field">
+    <label for="adminCode">Shared Admin Code</label>
 
-  <section class="card">
-    <div class="card-title">
-      Admin Access
-    </div>
-
-    <div class="field">
-      <label for="adminCode">Shared HR Upload Code</label>
-
-      <div class="code-input-row">
-        <input
-          id="adminCode"
-          type="password"
-          placeholder="Enter shared upload code"
-        >
-
-        <button id="checkCodeButton" class="success" type="button">
-          Check Code
-        </button>
-
-        <button id="toggleCodeButton" class="secondary" type="button">
-          Show
-        </button>
-      </div>
-
-      <div id="codeStatus" class="neutral">
-        Code not checked.
-      </div>
-    </div>
-
-    <div class="button-row">
-      <button id="loadButton">
-        Load Playlist
-      </button>
-
-      <a
-        class="button-link preview-link"
-        href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
-        target="_blank"
-        rel="noopener noreferrer"
+    <div class="code-input-row">
+      <input
+        id="adminCode"
+        type="password"
+        placeholder="Enter shared upload code"
       >
-        Open Output Preview
-      </a>
 
-      <button id="rememberButton" class="secondary">
-        Remember Code This Session
+      <button id="checkCodeButton" class="success" type="button">
+        Check Code
+      </button>
+
+      <button id="toggleCodeButton" class="secondary" type="button">
+        Show
       </button>
     </div>
-  </section>
 
-  <section class="card">
-    <div class="card-title">
-      Upload Content
+    <div id="codeStatus" class="neutral">
+      Enter the admin code to continue.
     </div>
+  </div>
+</section>
 
-    <div class="grid">
-      <div class="field">
-        <label for="titleInput">Title Optional</label>
-        <input
-          id="titleInput"
-          placeholder="If uploading one file, this title will be used. Multiple files use file names."
-        >
+<div id="adminContent" class="hidden">
+
+  <header>
+    <h1>Barclays Center - Employee Lounge Playlist Admin</h1>
+    <div class="subtitle">
+      Upload, reorder, publish, hide, delete, and preview display content.
+    </div>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <div class="card-title">
+        Admin Controls
       </div>
 
-      <div class="field">
-        <label for="durationInput">Default Duration Seconds</label>
-        <input
-          id="durationInput"
-          type="number"
-          min="1"
-          value="10"
-        >
+      <div class="button-row">
+        <button id="loadButton">
+          Load Playlist
+        </button>
 
-        <div class="help">
-          Images use this duration. Videos automatically use their actual video length.
+        <a
+          class="button-link preview-link"
+          href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open Output Preview
+        </a>
+
+        <button id="lockButton" class="secondary">
+          Lock Admin Page
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        Upload Content
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="titleInput">Title Optional</label>
+          <input
+            id="titleInput"
+            placeholder="If uploading one file, this title will be used. Multiple files use file names."
+          >
+        </div>
+
+        <div class="field">
+          <label for="durationInput">Default Duration Seconds</label>
+          <input
+            id="durationInput"
+            type="number"
+            min="1"
+            value="10"
+          >
+
+          <div class="help">
+            Images use this duration. Videos automatically use their actual video length.
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fileInput">Files</label>
+          <input
+            id="fileInput"
+            type="file"
+            multiple
+            accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
+          >
+
+          <div class="help">
+            You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
+          </div>
         </div>
       </div>
 
-      <div class="field">
-        <label for="fileInput">Files</label>
-        <input
-          id="fileInput"
-          type="file"
-          multiple
-          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
-        >
-
-        <div class="help">
-          You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
-        </div>
+      <div class="button-row">
+        <button id="uploadButton" class="success">
+          Upload Selected Files
+        </button>
       </div>
-    </div>
 
-    <div class="button-row">
-      <button id="uploadButton" class="success">
-        Upload Selected Files
-      </button>
-    </div>
+      <div id="status"></div>
+    </section>
 
-    <div id="status"></div>
-  </section>
+    <section class="card">
+      <div class="card-title">
+        Playlist
+      </div>
 
-  <section class="card">
-    <div class="card-title">
-      Playlist
-    </div>
+      <div class="help">
+        Drag items to reorder them. Edit titles, durations, and Published checkboxes, then click Save Playlist Changes once.
+      </div>
 
-    <div class="help">
-      Drag items to reorder them. Edit titles, durations, and Published checkboxes, then click Save Playlist Changes once.
-    </div>
+      <div class="button-row">
+        <button id="savePlaylistButton" class="success">
+          Save Playlist Changes
+        </button>
 
-    <div class="button-row">
-      <button id="savePlaylistButton" class="success">
-        Save Playlist Changes
-      </button>
+        <button id="refreshButton" class="secondary">
+          Refresh
+        </button>
 
-      <button id="refreshButton" class="secondary">
-        Refresh
-      </button>
+        <a
+          class="button-link preview-link"
+          href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Preview Output
+        </a>
+      </div>
 
-      <a
-        class="button-link preview-link"
-        href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Preview Output
-      </a>
-    </div>
+      <div id="playlist" class="playlist"></div>
+    </section>
 
-    <div id="playlist" class="playlist"></div>
-  </section>
+  </main>
 
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
@@ -509,6 +534,12 @@ const SUPABASE_ANON_KEY =
 
 const FUNCTION_URL =
   "https://scnlepcadipdhhzppovq.supabase.co/functions/v1/hr-admin";
+
+const accessGate =
+  document.getElementById("accessGate");
+
+const adminContent =
+  document.getElementById("adminContent");
 
 const adminCodeInput =
   document.getElementById("adminCode");
@@ -537,8 +568,8 @@ const uploadButton =
 const loadButton =
   document.getElementById("loadButton");
 
-const rememberButton =
-  document.getElementById("rememberButton");
+const lockButton =
+  document.getElementById("lockButton");
 
 const savePlaylistButton =
   document.getElementById("savePlaylistButton");
@@ -581,6 +612,55 @@ function setCodeStatus(message,type){
     type || "neutral";
 }
 
+function showAdminContent(){
+
+  document.body.classList.remove(
+    "locked"
+  );
+
+  accessGate.classList.add(
+    "hidden"
+  );
+
+  adminContent.classList.remove(
+    "hidden"
+  );
+}
+
+function lockAdminPage(){
+
+  codeIsValid =
+    false;
+
+  adminCodeInput.value =
+    "";
+
+  document.body.classList.add(
+    "locked"
+  );
+
+  adminContent.classList.add(
+    "hidden"
+  );
+
+  accessGate.classList.remove(
+    "hidden"
+  );
+
+  setCodeStatus(
+    "Enter the admin code to continue.",
+    "neutral"
+  );
+
+  playlist.innerHTML =
+    "";
+
+  setStatus(
+    "",
+    ""
+  );
+}
+
 function resetCodeValidation(){
 
   codeIsValid =
@@ -597,7 +677,7 @@ function requireValidCode(){
   if(!getAdminCode()){
 
     setCodeStatus(
-      "Enter the shared HR upload code first.",
+      "Enter the shared admin code first.",
       "bad"
     );
 
@@ -607,7 +687,7 @@ function requireValidCode(){
   if(!codeIsValid){
 
     setCodeStatus(
-      "Click Check Code before loading, uploading, or saving.",
+      "Enter the correct code before loading, uploading, or saving.",
       "bad"
     );
 
@@ -673,7 +753,7 @@ async function checkCode(){
       false;
 
     setCodeStatus(
-      "Enter the shared HR upload code first.",
+      "Enter the shared admin code first.",
       "bad"
     );
 
@@ -698,9 +778,13 @@ async function checkCode(){
       true;
 
     setCodeStatus(
-      "Code correct. You can now load the playlist, upload content, or save changes.",
+      "Code correct.",
       "good"
     );
+
+    showAdminContent();
+
+    await loadPlaylist();
 
   }catch(error){
 
@@ -1402,29 +1486,6 @@ async function savePlaylistChanges(){
   }
 }
 
-function rememberCodeThisSession(){
-
-  if(!getAdminCode()){
-
-    setCodeStatus(
-      "Enter the shared HR upload code first.",
-      "bad"
-    );
-
-    return;
-  }
-
-  sessionStorage.setItem(
-    "hrAdminCode",
-    getAdminCode()
-  );
-
-  setStatus(
-    "Code remembered for this browser tab.",
-    "good"
-  );
-}
-
 toggleCodeButton.addEventListener(
   "click",
   toggleCodeVisibility
@@ -1438,6 +1499,17 @@ checkCodeButton.addEventListener(
 adminCodeInput.addEventListener(
   "input",
   resetCodeValidation
+);
+
+adminCodeInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+
+      checkCode();
+    }
+  }
 );
 
 uploadButton.addEventListener(
@@ -1460,9 +1532,9 @@ savePlaylistButton.addEventListener(
   savePlaylistChanges
 );
 
-rememberButton.addEventListener(
+lockButton.addEventListener(
   "click",
-  rememberCodeThisSession
+  lockAdminPage
 );
 
 fileInput.addEventListener(
@@ -1512,22 +1584,6 @@ fileInput.addEventListener(
     );
   }
 );
-
-const savedCode =
-  sessionStorage.getItem(
-    "hrAdminCode"
-  );
-
-if(savedCode){
-
-  adminCodeInput.value =
-    savedCode;
-
-  setCodeStatus(
-    "Saved code found. Click Check Code to verify it.",
-    "neutral"
-  );
-}
 </script>
 
 </body>
