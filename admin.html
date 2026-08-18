@@ -417,10 +417,6 @@ button:disabled{
       </div>
 
       <div class="button-row">
-        <button id="loadButton">
-          Load Playlist
-        </button>
-
         <a
           class="button-link preview-link"
           href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
@@ -555,9 +551,6 @@ const fileInput =
 
 const uploadButton =
   document.getElementById("uploadButton");
-
-const loadButton =
-  document.getElementById("loadButton");
 
 const lockButton =
   document.getElementById("lockButton");
@@ -1520,11 +1513,6 @@ adminCodeInput.addEventListener(
 uploadButton.addEventListener(
   "click",
   uploadFile
-);
-
-loadButton.addEventListener(
-  "click",
-  loadPlaylist
 );
 
 refreshButton.addEventListener(
