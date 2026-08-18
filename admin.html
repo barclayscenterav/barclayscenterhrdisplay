@@ -439,12 +439,16 @@ button:disabled{
 
   <section class="card">
     <div class="card-title">
-      Playlist Order
+      Playlist
+    </div>
+
+    <div class="help">
+      Drag items to reorder them. Edit titles, durations, and Published checkboxes, then click Save Playlist Changes once.
     </div>
 
     <div class="button-row">
-      <button id="saveOrderButton" class="success">
-        Save Playlist Order
+      <button id="savePlaylistButton" class="success">
+        Save Playlist Changes
       </button>
 
       <button id="refreshButton" class="secondary">
@@ -499,8 +503,8 @@ const loadButton =
 const rememberButton =
   document.getElementById("rememberButton");
 
-const saveOrderButton =
-  document.getElementById("saveOrderButton");
+const savePlaylistButton =
+  document.getElementById("savePlaylistButton");
 
 const refreshButton =
   document.getElementById("refreshButton");
@@ -566,7 +570,7 @@ function requireValidCode(){
   if(!codeIsValid){
 
     setCodeStatus(
-      "Click Check Code before loading or uploading.",
+      "Click Check Code before loading, uploading, or saving.",
       "bad"
     );
 
@@ -657,7 +661,7 @@ async function checkCode(){
       true;
 
     setCodeStatus(
-      "Code correct. You can now load the playlist or upload content.",
+      "Code correct. You can now load the playlist, upload content, or save changes.",
       "good"
     );
 
@@ -965,50 +969,6 @@ function renderItem(item){
   actions.className =
     "item-actions";
 
-  const saveButton =
-    document.createElement("button");
-
-  saveButton.innerText =
-    "Save Item";
-
-  saveButton.className =
-    "success";
-
-  saveButton.addEventListener(
-    "click",
-    async () => {
-
-      if(!requireValidCode()){
-        return;
-      }
-
-      try{
-
-        await adminAction({
-          action:"update",
-          id:item.id,
-          title:titleBox.value,
-          durationSeconds:durationBox.value,
-          isActive:activeBox.checked
-        });
-
-        setStatus(
-          "Item saved.",
-          "good"
-        );
-
-        await loadPlaylist();
-
-      }catch(error){
-
-        setStatus(
-          error.message,
-          "bad"
-        );
-      }
-    }
-  );
-
   const deleteButton =
     document.createElement("button");
 
@@ -1059,7 +1019,6 @@ function renderItem(item){
     }
   );
 
-  actions.appendChild(saveButton);
   actions.appendChild(deleteButton);
 
   right.appendChild(controls);
@@ -1314,21 +1273,18 @@ async function uploadFile(){
   }
 }
 
-async function saveOrder(){
+async function savePlaylistChanges(){
 
   if(!requireValidCode()){
     return;
   }
 
-  const ids =
-    Array
-      .from(
-        playlist.querySelectorAll(".item")
-      )
-      .map(item => item.dataset.id)
-      .filter(Boolean);
+  const rows =
+    Array.from(
+      playlist.querySelectorAll(".item")
+    );
 
-  if(!ids.length){
+  if(!rows.length){
 
     setStatus(
       "No playlist items to save.",
@@ -1338,7 +1294,50 @@ async function saveOrder(){
     return;
   }
 
+  savePlaylistButton.disabled =
+    true;
+
+  setStatus(
+    "Saving playlist changes...",
+    ""
+  );
+
   try{
+
+    const ids =
+      rows
+        .map(row => row.dataset.id)
+        .filter(Boolean);
+
+    for(let i = 0; i < rows.length; i++){
+
+      const row =
+        rows[i];
+
+      const id =
+        row.dataset.id;
+
+      const titleBox =
+        row.querySelector(".item-title-input");
+
+      const durationBox =
+        row.querySelector(".item-duration-input");
+
+      const activeBox =
+        row.querySelector(".item-active-input");
+
+      if(!id){
+        continue;
+      }
+
+      await adminAction({
+        action:"update",
+        id:id,
+        title:titleBox ? titleBox.value : "",
+        durationSeconds:durationBox ? durationBox.value : "10",
+        isActive:activeBox ? activeBox.checked : false
+      });
+    }
 
     await adminAction({
       action:"reorder",
@@ -1346,7 +1345,7 @@ async function saveOrder(){
     });
 
     setStatus(
-      "Playlist order saved.",
+      "Playlist changes saved.",
       "good"
     );
 
@@ -1358,6 +1357,11 @@ async function saveOrder(){
       error.message,
       "bad"
     );
+
+  }finally{
+
+    savePlaylistButton.disabled =
+      false;
   }
 }
 
@@ -1414,9 +1418,9 @@ refreshButton.addEventListener(
   loadPlaylist
 );
 
-saveOrderButton.addEventListener(
+savePlaylistButton.addEventListener(
   "click",
-  saveOrder
+  savePlaylistChanges
 );
 
 rememberButton.addEventListener(
