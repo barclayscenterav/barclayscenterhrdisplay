@@ -25,14 +25,26 @@ body{
 #stage{
   position:fixed;
   inset:0;
-  background:#020617;
   overflow:hidden;
+  background-color:#020617;
+  background-image:url("background.png");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+#stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.15);
+  z-index:0;
+  pointer-events:none;
 }
 
 .layer{
   position:absolute;
   inset:0;
-  background:#020617;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -50,12 +62,13 @@ body{
   width:100%;
   height:100%;
   object-fit:contain;
-  background:#020617;
+  background:transparent;
   display:block;
 }
 
 iframe.media{
   border:none;
+  background:white;
 }
 
 #empty{
@@ -95,29 +108,17 @@ import {
   createClient
 } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-/* =========================
-   SUPABASE CONFIG
-========================= */
-
 const SUPABASE_URL =
   "https://scnlepcadipdhhzppovq.supabase.co";
 
 const SUPABASE_ANON_KEY =
   "sb_publishable_FSLIkrVTT9GkAxXjTWoWTw_g9_BsURe";
 
-/* =========================
-   CLIENT
-========================= */
-
 const supabase =
   createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
-
-/* =========================
-   ELEMENTS
-========================= */
 
 const layerA =
   document.getElementById("layerA");
@@ -127,10 +128,6 @@ const layerB =
 
 const empty =
   document.getElementById("empty");
-
-/* =========================
-   STATE
-========================= */
 
 let playlist =
   [];
@@ -155,10 +152,6 @@ let isSwitching =
 
 let realtimeChannel =
   null;
-
-/* =========================
-   HELPERS
-========================= */
 
 function isImage(fileType){
 
@@ -248,10 +241,6 @@ function swapLayers(){
     700
   );
 }
-
-/* =========================
-   MEDIA CREATION
-========================= */
 
 function createImageElement(item){
 
@@ -402,10 +391,6 @@ async function createMediaElement(item){
   return null;
 }
 
-/* =========================
-   PLAYBACK
-========================= */
-
 async function showItem(index){
 
   if(isSwitching){
@@ -511,10 +496,6 @@ function nextItem(){
   );
 }
 
-/* =========================
-   LOAD PLAYLIST
-========================= */
-
 async function loadPlaylist(options = {}){
 
   const shouldRestart =
@@ -594,10 +575,6 @@ async function loadPlaylist(options = {}){
   }
 }
 
-/* =========================
-   REALTIME REFRESH
-========================= */
-
 function startRealtimeRefresh(){
 
   realtimeChannel =
@@ -621,10 +598,6 @@ function startRealtimeRefresh(){
       .subscribe();
 }
 
-/* =========================
-   BACKUP REFRESH
-========================= */
-
 setInterval(
   () => {
 
@@ -635,10 +608,6 @@ setInterval(
   },
   30000
 );
-
-/* =========================
-   START
-========================= */
 
 loadPlaylist({
   restart:true
