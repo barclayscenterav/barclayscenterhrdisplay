@@ -8,7 +8,7 @@ const SUPABASE_URL =
   Deno.env.get("SUPABASE_URL") || "";
 
 const HR_ADMIN_CODE =
-  Deno.env.get("HR_ADMIN_CODE") || "BCenter0928";
+  Deno.env.get("HR_ADMIN_CODE") || "";
 
 function getSupabaseAdminKey(){
 
