@@ -401,13 +401,17 @@ button:disabled{
       </div>
 
       <div class="field">
-        <label for="durationInput">Duration Seconds</label>
+        <label for="durationInput">Default Duration Seconds</label>
         <input
           id="durationInput"
           type="number"
           min="1"
           value="10"
         >
+
+        <div class="help">
+          Images use this duration. Videos automatically use their actual video length.
+        </div>
       </div>
 
       <div class="field">
@@ -416,11 +420,11 @@ button:disabled{
           id="fileInput"
           type="file"
           multiple
-          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,application/pdf,.pdf"
+          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
         >
 
         <div class="help">
-          You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, MP4, and PDF.
+          You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
         </div>
       </div>
     </div>
@@ -687,16 +691,94 @@ function isVideo(fileType){
     fileType.startsWith("video/");
 }
 
-function isPdf(fileType){
-
-  return fileType === "application/pdf";
-}
-
 function getFileNameWithoutExtension(fileName){
 
   return fileName
     .replace(/\.[^/.]+$/,"")
     .trim();
+}
+
+function getDefaultDurationSeconds(){
+
+  const value =
+    Number(
+      durationInput.value || 10
+    );
+
+  if(Number.isNaN(value) || value < 1){
+    return 10;
+  }
+
+  return Math.round(value);
+}
+
+function getVideoDurationSeconds(file){
+
+  return new Promise(resolve => {
+
+    const objectUrl =
+      URL.createObjectURL(file);
+
+    const video =
+      document.createElement("video");
+
+    video.preload =
+      "metadata";
+
+    video.onloadedmetadata =
+      () => {
+
+        const duration =
+          video.duration;
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        if(
+          Number.isFinite(duration) &&
+          duration > 0
+        ){
+
+          resolve(
+            Math.ceil(duration)
+          );
+
+          return;
+        }
+
+        resolve(
+          getDefaultDurationSeconds()
+        );
+      };
+
+    video.onerror =
+      () => {
+
+        URL.revokeObjectURL(
+          objectUrl
+        );
+
+        resolve(
+          getDefaultDurationSeconds()
+        );
+      };
+
+    video.src =
+      objectUrl;
+  });
+}
+
+async function getDurationForFile(file){
+
+  if(isVideo(file.type)){
+
+    return await getVideoDurationSeconds(
+      file
+    );
+  }
+
+  return getDefaultDurationSeconds();
 }
 
 function renderPreview(item){
@@ -732,11 +814,6 @@ function renderPreview(item){
       true;
 
     preview.appendChild(video);
-
-  }else if(isPdf(item.file_type)){
-
-    preview.innerText =
-      "PDF";
 
   }else{
 
@@ -1066,6 +1143,11 @@ async function uploadSingleFile(file,index,total){
       );
   }
 
+  const durationForThisFile =
+    await getDurationForFile(
+      file
+    );
+
   const formData =
     new FormData();
 
@@ -1086,7 +1168,7 @@ async function uploadSingleFile(file,index,total){
 
   formData.append(
     "durationSeconds",
-    durationInput.value || "10"
+    String(durationForThisFile)
   );
 
   formData.append(
@@ -1094,13 +1176,25 @@ async function uploadSingleFile(file,index,total){
     file
   );
 
-  setStatus(
+  let uploadMessage =
     "Uploading file " +
     index +
     " of " +
     total +
     ": " +
-    file.name,
+    file.name;
+
+  if(isVideo(file.type)){
+
+    uploadMessage =
+      uploadMessage +
+      " (" +
+      durationForThisFile +
+      " sec video)";
+  }
+
+  setStatus(
+    uploadMessage,
     ""
   );
 
@@ -1176,7 +1270,7 @@ async function uploadFile(){
     setStatus(
       "Upload complete. " +
       files.length +
-      " file(s) added to playlist.",
+      " file(s) added to playlist. Videos used their actual length.",
       "good"
     );
 
@@ -1308,7 +1402,7 @@ rememberButton.addEventListener(
 
 fileInput.addEventListener(
   "change",
-  () => {
+  async () => {
 
     const files =
       Array.from(
@@ -1316,6 +1410,20 @@ fileInput.addEventListener(
       );
 
     if(!files.length){
+      return;
+    }
+
+    const videoFiles =
+      files.filter(file => isVideo(file.type));
+
+    if(videoFiles.length){
+
+      setStatus(
+        files.length +
+        " file(s) selected. Video items will use their actual length. Images use the default duration.",
+        "good"
+      );
+
       return;
     }
 
