@@ -114,7 +114,8 @@ input[type="file"]{
   width:100px !important;
 }
 
-button{
+button,
+.button-link{
   padding:14px 18px;
   border:none;
   border-radius:10px;
@@ -123,9 +124,15 @@ button{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1.2;
 }
 
-button:hover{
+button:hover,
+.button-link:hover{
   background:#2563eb;
 }
 
@@ -163,6 +170,14 @@ button:disabled{
 
 .success:hover{
   background:#15803d;
+}
+
+.preview-link{
+  background:#7c3aed;
+}
+
+.preview-link:hover{
+  background:#6d28d9;
 }
 
 #codeStatus{
@@ -330,6 +345,10 @@ button:disabled{
   #toggleCodeButton{
     width:100% !important;
   }
+
+  .button-link{
+    width:100%;
+  }
 }
 </style>
 </head>
@@ -339,7 +358,7 @@ button:disabled{
 <header>
   <h1>Barclays Center - Employee Lounge Playlist Admin</h1>
   <div class="subtitle">
-    Upload, reorder, publish, hide, and delete display content.
+    Upload, reorder, publish, hide, delete, and preview display content.
   </div>
 </header>
 
@@ -378,6 +397,15 @@ button:disabled{
       <button id="loadButton">
         Load Playlist
       </button>
+
+      <a
+        class="button-link preview-link"
+        href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open Output Preview
+      </a>
 
       <button id="rememberButton" class="secondary">
         Remember Code This Session
@@ -454,6 +482,15 @@ button:disabled{
       <button id="refreshButton" class="secondary">
         Refresh
       </button>
+
+      <a
+        class="button-link preview-link"
+        href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Preview Output
+      </a>
     </div>
 
     <div id="playlist" class="playlist"></div>
@@ -1345,7 +1382,7 @@ async function savePlaylistChanges(){
     });
 
     setStatus(
-      "Playlist changes saved.",
+      "Playlist changes saved. Open or refresh the output preview to confirm.",
       "good"
     );
 
