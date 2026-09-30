@@ -32,50 +32,59 @@ body{
   font-family:Arial,sans-serif;
 }
 
-/* =========================
+/* =================================================
    MAIN STAGE
-========================= */
+================================================= */
 
 #stage{
   position:fixed;
   inset:0;
   overflow:hidden;
+  background:#020617;
+}
+
+/* =================================================
+   PERMANENT BACKGROUND
+
+   Keep background.jpg in the same
+   GitHub folder as index.html.
+================================================= */
+
+#backgroundLayer{
+  position:absolute;
+  inset:0;
 
   background-color:#020617;
-
-  /*
-    Keep background.jpg in the
-    same GitHub folder as index.html
-  */
-  background-image:url("background.jpg");
+  background-image:url("./background.jpg");
 
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
+
+  z-index:0;
 }
 
 /*
-  Slight dark overlay over the
-  background image.
+  Slight dim over the background only.
 
-  Playlist media sits above this.
+  This sits BELOW all playlist media.
 */
-#stage::after{
-  content:"";
+
+#backgroundShade{
   position:absolute;
   inset:0;
 
   background:
     rgba(0,0,0,0.15);
 
-  z-index:0;
+  z-index:1;
 
   pointer-events:none;
 }
 
-/* =========================
-   MEDIA LAYERS
-========================= */
+/* =================================================
+   PLAYLIST MEDIA LAYERS
+================================================= */
 
 .layer{
   position:absolute;
@@ -90,32 +99,62 @@ body{
   transition:
     opacity 0.6s ease;
 
-  z-index:1;
+  z-index:2;
 
   pointer-events:none;
 }
 
 .layer.active{
   opacity:1;
-  z-index:2;
+  z-index:3;
 }
 
+/*
+  IMPORTANT:
+
+  The media itself no longer fills a
+  100% x 100% element.
+
+  Instead, it keeps its actual aspect
+  ratio and is limited to the screen.
+
+  This allows background.jpg to remain
+  visible around non-16:9 content.
+*/
+
 .media{
-  width:100%;
-  height:100%;
+  display:block;
 
-  /*
-    Shows the entire image/video
-    without stretching it.
+  width:auto;
+  height:auto;
 
-    background.jpg remains visible
-    around content that is not 16:9.
-  */
+  max-width:100%;
+  max-height:100%;
+
   object-fit:contain;
-
   object-position:center;
 
-  display:block;
+  background:transparent;
+}
+
+/* Images */
+
+img.media{
+  width:auto;
+  height:auto;
+
+  max-width:100vw;
+  max-height:100vh;
+}
+
+/* Videos */
+
+video.media{
+  width:auto;
+  height:auto;
+
+  max-width:100vw;
+  max-height:100vh;
 
   background:transparent;
 }
@@ -127,6 +166,15 @@ body{
 
 <div id="stage">
 
+  <!--
+    Permanent fallback background.
+    This never gets replaced by playlist content.
+  -->
+  <div id="backgroundLayer"></div>
+
+  <div id="backgroundShade"></div>
+
+  <!-- Playlist crossfade layers -->
   <div
     id="layerA"
     class="layer"
@@ -152,30 +200,15 @@ const WORKER_URL =
    SETTINGS
 ================================================= */
 
-/*
-  Check GitHub/Worker for playlist
-  changes every 15 seconds.
-*/
 const PLAYLIST_CHECK_INTERVAL =
   15000;
 
-/*
-  Crossfade length between items.
-*/
 const FADE_TIME =
   600;
 
-/*
-  If media fails to load, wait this
-  long before moving to another item.
-*/
 const FAILED_MEDIA_DELAY =
   1500;
 
-/*
-  Maximum amount of time we'll wait
-  for a video to become playable.
-*/
 const VIDEO_LOAD_TIMEOUT =
   20000;
 
@@ -329,7 +362,6 @@ async function fetchPlaylist(){
       url,
       {
         method:"GET",
-
         cache:"no-store",
 
         headers:{
@@ -387,8 +419,10 @@ async function refreshPlaylist(){
       newPlaylist;
 
     /*
-      Nothing published.
-      Leave only the background visible.
+      No published playlist items.
+
+      Both media layers clear,
+      leaving background.jpg visible.
     */
 
     if(!playlist.length){
@@ -397,10 +431,6 @@ async function refreshPlaylist(){
 
       return;
     }
-
-    /*
-      Player has not started yet.
-    */
 
     if(
       !playerStarted ||
@@ -416,9 +446,8 @@ async function refreshPlaylist(){
     }
 
     /*
-      See whether the currently playing
-      item still exists in the newly
-      loaded playlist.
+      See whether currently displayed
+      item is still published.
     */
 
     const existingIndex =
@@ -430,14 +459,6 @@ async function refreshPlaylist(){
 
     if(existingIndex >= 0){
 
-      /*
-        Current item is still published.
-
-        Keep showing it, but update
-        currentIndex so the NEXT item
-        follows the newest saved order.
-      */
-
       currentIndex =
         existingIndex;
 
@@ -447,9 +468,6 @@ async function refreshPlaylist(){
     /*
       Current item was unpublished
       or deleted.
-
-      Move immediately to the first
-      available published item.
     */
 
     currentIndex =
@@ -617,13 +635,6 @@ function createVideo(item){
         );
       }
 
-      /*
-        loadeddata or canplay means we
-        can transition to the video
-        without intentionally showing
-        a blank screen first.
-      */
-
       video.addEventListener(
         "loadeddata",
         ready,
@@ -702,17 +713,12 @@ async function createMedia(item){
 }
 
 /* =================================================
-   DETERMINE NEXT ITEM
+   NEXT ITEM
 ================================================= */
 
 function moveToNextItem(
   expectedItemId = null
 ){
-
-  /*
-    Prevent an old timer or ended
-    event from advancing a newer item.
-  */
 
   if(
     expectedItemId !== null &&
@@ -729,14 +735,6 @@ function moveToNextItem(
 
     return;
   }
-
-  /*
-    Locate current item using the latest
-    playlist order.
-
-    This means reordering the playlist
-    in admin affects the very next item.
-  */
 
   const currentPosition =
     playlist.findIndex(
@@ -792,14 +790,6 @@ async function showCurrentItem(){
       currentIndex
     ];
 
-  /*
-    Each transition gets a unique number.
-
-    If another playlist change occurs
-    while media is still loading, the
-    old transition is ignored.
-  */
-
   const thisTransition =
     ++transitionNumber;
 
@@ -821,8 +811,10 @@ async function showCurrentItem(){
     );
 
     /*
-      Leave the previous item on screen
-      instead of flashing to black.
+      Keep existing media visible.
+
+      If nothing else is visible,
+      background.jpg remains visible.
     */
 
     if(
@@ -844,14 +836,9 @@ async function showCurrentItem(){
     return;
   }
 
-  /*
-    Another transition started while
-    this file was loading.
-  */
-
   if(
     thisTransition !==
-    transitionNumber
+      transitionNumber
   ){
 
     if(
@@ -868,8 +855,8 @@ async function showCurrentItem(){
   }
 
   /*
-    Prepare the hidden layer while the
-    current content remains visible.
+    Build the next item while the
+    existing layer stays on-screen.
   */
 
   clearLayer(
@@ -886,9 +873,9 @@ async function showCurrentItem(){
   playerStarted =
     true;
 
-  /* =========================
-     VIDEO
-  ========================= */
+  /* =================================================
+     VIDEO PLAYBACK
+  ================================================= */
 
   if(
     media.tagName ===
@@ -942,9 +929,9 @@ async function showCurrentItem(){
     }
   }
 
-  /* =========================
+  /* =================================================
      CROSSFADE
-  ========================= */
+  ================================================= */
 
   const oldLayer =
     activeLayer;
@@ -963,11 +950,6 @@ async function showCurrentItem(){
   inactiveLayer =
     oldLayer;
 
-  /*
-    Don't remove old content until the
-    fade has completed.
-  */
-
   setTimeout(
     () => {
 
@@ -979,9 +961,9 @@ async function showCurrentItem(){
     FADE_TIME + 100
   );
 
-  /* =========================
-     DURATION
-  ========================= */
+  /* =================================================
+     DISPLAY DURATION
+  ================================================= */
 
   const durationSeconds =
     Math.max(
@@ -993,7 +975,7 @@ async function showCurrentItem(){
     );
 
   /*
-    Images always use the playlist
+    Images use their configured
     duration.
   */
 
@@ -1019,12 +1001,10 @@ async function showCurrentItem(){
   }
 
   /*
-    Videos normally advance using their
-    native "ended" event.
+    Videos advance using their ended
+    event.
 
-    This backup timer prevents a broken
-    browser/player from leaving the
-    display stuck forever.
+    This timer is a safety backup.
   */
 
   playbackTimer =
@@ -1059,18 +1039,7 @@ document.addEventListener(
       return;
     }
 
-    /*
-      Immediately check for playlist
-      changes when the browser/display
-      becomes active again.
-    */
-
     refreshPlaylist();
-
-    /*
-      Resume active video if the browser
-      paused it while the tab was hidden.
-    */
 
     const activeVideo =
       activeLayer.querySelector(
@@ -1095,7 +1064,7 @@ document.addEventListener(
 );
 
 /* =================================================
-   ONLINE RECOVERY
+   INTERNET RECOVERY
 ================================================= */
 
 window.addEventListener(
@@ -1107,18 +1076,10 @@ window.addEventListener(
 );
 
 /* =================================================
-   START PLAYER
+   START
 ================================================= */
 
 refreshPlaylist();
-
-/*
-  Continue checking for changes.
-
-  Changes made in admin should reach
-  the display within approximately
-  15 seconds.
-*/
 
 setInterval(
   refreshPlaylist,
