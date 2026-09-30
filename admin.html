@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Barclays Center - Employee Lounge Playlist</title>
+<title>Barclays Center - Employee Lounge Playlist Admin</title>
 
 <style>
 *{
@@ -17,6 +17,12 @@ body{
   background:#0f172a;
   color:white;
   min-height:100vh;
+}
+
+body.locked{
+  display:grid;
+  place-items:center;
+  padding:20px;
 }
 
 header{
@@ -46,6 +52,11 @@ main{
   border-radius:18px;
   padding:22px;
   margin-bottom:22px;
+}
+
+.access-card{
+  width:min(620px,100%);
+  margin:0;
 }
 
 .card-title{
@@ -87,34 +98,26 @@ input[type="file"]{
 }
 
 .code-input-row{
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:stretch !important;
-  gap:10px !important;
-  width:100% !important;
+  display:flex;
+  align-items:stretch;
+  gap:10px;
 }
 
 .code-input-row input{
-  flex:1 1 auto !important;
-  width:auto !important;
-  min-width:0 !important;
-}
-
-.code-input-row button{
-  flex:0 0 auto !important;
-  margin:0 !important;
-  white-space:nowrap !important;
+  flex:1;
+  min-width:0;
 }
 
 #checkCodeButton{
-  width:130px !important;
+  width:130px;
 }
 
 #toggleCodeButton{
-  width:100px !important;
+  width:100px;
 }
 
-button{
+button,
+.button-link{
   padding:14px 18px;
   border:none;
   border-radius:10px;
@@ -123,14 +126,19 @@ button{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 
-button:hover{
+button:hover,
+.button-link:hover{
   background:#2563eb;
 }
 
 button:disabled{
-  opacity:0.5;
+  opacity:.5;
   cursor:not-allowed;
 }
 
@@ -149,14 +157,6 @@ button:disabled{
   background:#334155;
 }
 
-.danger{
-  background:#dc2626;
-}
-
-.danger:hover{
-  background:#b91c1c;
-}
-
 .success{
   background:#16a34a;
 }
@@ -165,10 +165,32 @@ button:disabled{
   background:#15803d;
 }
 
+.danger{
+  background:#dc2626;
+}
+
+.danger:hover{
+  background:#b91c1c;
+}
+
+.preview-link{
+  background:#7c3aed;
+}
+
+.preview-link:hover{
+  background:#6d28d9;
+}
+
+.help{
+  color:#94a3b8;
+  font-size:14px;
+  line-height:1.5;
+}
+
 #codeStatus{
   min-height:24px;
-  font-weight:bold;
   margin-top:10px;
+  font-weight:bold;
 }
 
 #codeStatus.good{
@@ -185,9 +207,9 @@ button:disabled{
 
 #status{
   min-height:26px;
+  margin-top:12px;
   text-align:center;
   font-weight:bold;
-  margin-top:12px;
 }
 
 #status.good{
@@ -198,21 +220,16 @@ button:disabled{
   color:#f87171;
 }
 
-.help{
-  color:#94a3b8;
-  font-size:14px;
-  line-height:1.4;
-}
-
 .playlist{
   display:flex;
   flex-direction:column;
   gap:14px;
+  margin-top:18px;
 }
 
 .item{
   background:#0f172a;
-  border:1px solid rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,.1);
   border-radius:16px;
   padding:14px;
   display:grid;
@@ -221,19 +238,19 @@ button:disabled{
   align-items:center;
 }
 
-.item.dragging{
-  opacity:0.5;
-}
-
 .handle{
   cursor:grab;
   background:#334155;
-  color:white;
-  border-radius:10px;
   padding:10px;
+  border-radius:10px;
   text-align:center;
-  font-weight:900;
+  font-weight:bold;
   margin-bottom:8px;
+  user-select:none;
+}
+
+.item.dragging{
+  opacity:.5;
 }
 
 .preview{
@@ -245,10 +262,6 @@ button:disabled{
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#94a3b8;
-  font-size:13px;
-  text-align:center;
-  font-weight:bold;
 }
 
 .preview img,
@@ -260,27 +273,27 @@ button:disabled{
 
 .item-controls{
   display:grid;
-  grid-template-columns:1fr 120px 120px;
+  grid-template-columns:1fr 120px 130px;
   gap:10px;
   align-items:end;
 }
 
 .checkbox-row{
+  min-height:48px;
   display:flex;
   align-items:center;
+  justify-content:center;
   gap:8px;
   color:#cbd5e1;
   font-weight:bold;
-  justify-content:center;
 }
 
 .checkbox-row input{
-  width:auto;
+  width:20px;
+  height:20px;
 }
 
 .item-actions{
-  display:flex;
-  gap:8px;
   margin-top:10px;
 }
 
@@ -290,21 +303,14 @@ button:disabled{
   padding:30px;
 }
 
+.hidden{
+  display:none !important;
+}
+
 @media(max-width:800px){
+
   .grid{
     grid-template-columns:1fr;
-  }
-
-  .code-input-row{
-    flex-direction:row !important;
-  }
-
-  #checkCodeButton{
-    width:115px !important;
-  }
-
-  #toggleCodeButton{
-    width:85px !important;
   }
 
   .item{
@@ -322,152 +328,245 @@ button:disabled{
 }
 
 @media(max-width:520px){
+
   .code-input-row{
-    flex-direction:column !important;
+    flex-direction:column;
   }
 
   #checkCodeButton,
   #toggleCodeButton{
-    width:100% !important;
+    width:100%;
+  }
+
+  .button-link{
+    width:100%;
   }
 }
 </style>
 </head>
 
-<body>
+<body class="locked">
+
+<section id="accessGate" class="card access-card">
+
+  <div class="card-title">
+    Barclays Center - Employee Lounge Playlist Admin
+  </div>
+
+  <div class="field">
+
+    <label for="adminCode">
+      Shared Admin Code
+    </label>
+
+    <div class="code-input-row">
+
+      <input
+        id="adminCode"
+        type="password"
+        placeholder="Enter shared upload code"
+      >
+
+      <button
+        id="checkCodeButton"
+        class="success"
+      >
+        Check Code
+      </button>
+
+      <button
+        id="toggleCodeButton"
+        class="secondary"
+      >
+        Show
+      </button>
+
+    </div>
+
+    <div id="codeStatus" class="neutral">
+      Enter the admin code to continue.
+    </div>
+
+  </div>
+
+</section>
+
+<div id="adminContent" class="hidden">
 
 <header>
-  <h1>HR Playlist Admin</h1>
+
+  <h1>
+    Barclays Center - Employee Lounge Playlist Admin
+  </h1>
+
   <div class="subtitle">
     Upload, reorder, publish, hide, and delete display content.
   </div>
+
 </header>
 
 <main>
 
-  <section class="card">
-    <div class="card-title">
-      Admin Access
+<section class="card">
+
+  <div class="card-title">
+    Admin Controls
+  </div>
+
+  <div class="button-row">
+
+    <a
+      class="button-link preview-link"
+      href="https://barclayscenterav.github.io/barclayscenterhrdisplay/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Open Output Preview
+    </a>
+
+    <button
+      id="lockButton"
+      class="secondary"
+    >
+      Lock Admin Page
+    </button>
+
+  </div>
+
+</section>
+
+<section class="card">
+
+  <div class="card-title">
+    Upload Content
+  </div>
+
+  <div class="grid">
+
+    <div class="field">
+
+      <label for="titleInput">
+        Title Optional
+      </label>
+
+      <input
+        id="titleInput"
+        placeholder="Single-file uploads can use a custom title"
+      >
+
     </div>
 
     <div class="field">
-      <label for="adminCode">Shared HR Upload Code</label>
 
-      <div class="code-input-row">
-        <input
-          id="adminCode"
-          type="password"
-          placeholder="Enter shared upload code"
-        >
+      <label for="durationInput">
+        Default Duration Seconds
+      </label>
 
-        <button id="checkCodeButton" class="success" type="button">
-          Check Code
-        </button>
+      <input
+        id="durationInput"
+        type="number"
+        min="1"
+        value="10"
+      >
 
-        <button id="toggleCodeButton" class="secondary" type="button">
-          Show
-        </button>
+      <div class="help">
+        Images use this duration. Videos automatically use their actual length when the browser can read it.
       </div>
 
-      <div id="codeStatus" class="neutral">
-        Code not checked.
-      </div>
     </div>
 
-    <div class="button-row">
-      <button id="loadButton">
-        Load Playlist
-      </button>
+    <div class="field">
 
-      <button id="rememberButton" class="secondary">
-        Remember Code This Session
-      </button>
-    </div>
-  </section>
+      <label for="fileInput">
+        Files
+      </label>
 
-  <section class="card">
-    <div class="card-title">
-      Upload Content
-    </div>
+      <input
+        id="fileInput"
+        type="file"
+        multiple
+        accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/quicktime,.mov"
+      >
 
-    <div class="grid">
-      <div class="field">
-        <label for="titleInput">Title Optional</label>
-        <input
-          id="titleInput"
-          placeholder="If uploading one file, this title will be used. Multiple files use file names."
-        >
+      <div class="help">
+        You can select multiple files at once. Maximum file size is 50 MB per file. For best display, files should be 1920 × 1080. Accepted files: PNG, JPG, WEBP, GIF, MP4, and MOV.
       </div>
 
-      <div class="field">
-        <label for="durationInput">Default Duration Seconds</label>
-        <input
-          id="durationInput"
-          type="number"
-          min="1"
-          value="10"
-        >
-
-        <div class="help">
-          Images use this duration. Videos automatically use their actual video length.
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="fileInput">Files</label>
-        <input
-          id="fileInput"
-          type="file"
-          multiple
-          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4"
-        >
-
-        <div class="help">
-          You can select multiple files at once. For best display, files should be 1920 x 1080. Accepted files: PNG, JPG, WEBP, GIF, and MP4.
-        </div>
-      </div>
     </div>
 
-    <div class="button-row">
-      <button id="uploadButton" class="success">
-        Upload Selected Files
-      </button>
-    </div>
+  </div>
 
-    <div id="status"></div>
-  </section>
+  <div class="button-row">
 
-  <section class="card">
-    <div class="card-title">
-      Playlist Order
-    </div>
+    <button
+      id="uploadButton"
+      class="success"
+    >
+      Upload Selected Files
+    </button>
 
-    <div class="button-row">
-      <button id="saveOrderButton" class="success">
-        Save Playlist Order
-      </button>
+  </div>
 
-      <button id="refreshButton" class="secondary">
-        Refresh
-      </button>
-    </div>
+  <div id="status"></div>
 
-    <div id="playlist" class="playlist"></div>
-  </section>
+</section>
+
+<section class="card">
+
+  <div class="card-title">
+    Playlist
+  </div>
+
+  <div class="help">
+    Drag items to reorder them. Change titles, durations, or Published checkboxes, then click Save Playlist Changes once.
+  </div>
+
+  <div class="button-row">
+
+    <button
+      id="savePlaylistButton"
+      class="success"
+    >
+      Save Playlist Changes
+    </button>
+
+    <button
+      id="refreshButton"
+      class="secondary"
+    >
+      Refresh
+    </button>
+
+  </div>
+
+  <div id="playlist" class="playlist"></div>
+
+</section>
 
 </main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 <script>
-const SUPABASE_URL =
-  "https://scnlepcadipdhhzppovq.supabase.co";
 
-const SUPABASE_ANON_KEY =
-  "sb_publishable_FSLIkrVTT9GkAxXjTWoWTw_g9_BsURe";
+/* ======================================
+   ENTER YOUR CLOUDFLARE WORKER URL HERE
+====================================== */
 
-const FUNCTION_URL =
-  "https://scnlepcadipdhhzppovq.supabase.co/functions/v1/hr-admin";
+const WORKER_URL =
+  "https://barclays-employee-lounge-api.barclayscenterav.workers.dev/";
+
+/* ====================================== */
+
+const MAX_FILE_SIZE =
+  50 * 1024 * 1024;
+
+const accessGate =
+  document.getElementById("accessGate");
+
+const adminContent =
+  document.getElementById("adminContent");
 
 const adminCodeInput =
   document.getElementById("adminCode");
@@ -493,14 +592,11 @@ const fileInput =
 const uploadButton =
   document.getElementById("uploadButton");
 
-const loadButton =
-  document.getElementById("loadButton");
+const lockButton =
+  document.getElementById("lockButton");
 
-const rememberButton =
-  document.getElementById("rememberButton");
-
-const saveOrderButton =
-  document.getElementById("saveOrderButton");
+const savePlaylistButton =
+  document.getElementById("savePlaylistButton");
 
 const refreshButton =
   document.getElementById("refreshButton");
@@ -517,122 +613,162 @@ let sortable =
 let codeIsValid =
   false;
 
-function getAdminCode(){
+function cleanWorkerUrl(){
 
-  return adminCodeInput.value.trim();
+  return WORKER_URL
+    .replace(/\/+$/,"");
 }
 
-function setStatus(message,type){
+function getAdminCode(){
+
+  return adminCodeInput
+    .value
+    .trim();
+}
+
+function setStatus(
+  message,
+  type = ""
+){
 
   statusEl.innerText =
     message;
 
   statusEl.className =
-    type || "";
+    type;
 }
 
-function setCodeStatus(message,type){
+function setCodeStatus(
+  message,
+  type = "neutral"
+){
 
   codeStatus.innerText =
     message;
 
   codeStatus.className =
-    type || "neutral";
+    type;
 }
 
-function resetCodeValidation(){
+function showAdmin(){
+
+  document.body.classList.remove(
+    "locked"
+  );
+
+  accessGate.classList.add(
+    "hidden"
+  );
+
+  adminContent.classList.remove(
+    "hidden"
+  );
+}
+
+function lockAdmin(){
 
   codeIsValid =
     false;
 
+  adminCodeInput.value =
+    "";
+
+  playlist.innerHTML =
+    "";
+
+  adminContent.classList.add(
+    "hidden"
+  );
+
+  accessGate.classList.remove(
+    "hidden"
+  );
+
+  document.body.classList.add(
+    "locked"
+  );
+
   setCodeStatus(
-    "Code not checked.",
+    "Enter the admin code to continue.",
     "neutral"
   );
+
+  setStatus("");
 }
 
-function requireValidCode(){
+function toggleCode(){
 
-  if(!getAdminCode()){
-
-    setCodeStatus(
-      "Enter the shared HR upload code first.",
-      "bad"
-    );
-
-    return false;
-  }
-
-  if(!codeIsValid){
-
-    setCodeStatus(
-      "Click Check Code before loading or uploading.",
-      "bad"
-    );
-
-    return false;
-  }
-
-  return true;
-}
-
-function toggleCodeVisibility(){
-
-  const isHidden =
-    adminCodeInput.type === "password";
+  const hidden =
+    adminCodeInput.type ===
+    "password";
 
   adminCodeInput.type =
-    isHidden ? "text" : "password";
+    hidden
+      ? "text"
+      : "password";
 
   toggleCodeButton.innerText =
-    isHidden ? "Hide" : "Show";
+    hidden
+      ? "Hide"
+      : "Show";
 }
 
-function getHeaders(){
-
-  return {
-    "apikey":SUPABASE_ANON_KEY,
-    "Authorization":"Bearer " + SUPABASE_ANON_KEY,
-    "Content-Type":"application/json"
-  };
-}
-
-async function adminAction(payload){
+async function adminAction(
+  action,
+  payload = {}
+){
 
   const response =
     await fetch(
-      FUNCTION_URL,
+      cleanWorkerUrl() +
+      "/api/admin",
       {
         method:"POST",
-        headers:getHeaders(),
-        body:JSON.stringify({
-          ...payload,
-          adminCode:getAdminCode()
-        })
+
+        headers:{
+          "Content-Type":
+            "application/json",
+
+          "X-Admin-Code":
+            getAdminCode()
+        },
+
+        body:
+          JSON.stringify({
+            action:action,
+            ...payload
+          })
       }
     );
 
   const data =
-    await response.json();
+    await response.json()
+      .catch(
+        () => ({})
+      );
 
-  if(!response.ok || data.error){
+  if(
+    !response.ok ||
+    data.error
+  ){
+
     throw new Error(
-      data.error || "Request failed."
+      data.error ||
+      "Request failed."
     );
   }
 
   return data;
 }
 
+/* LOGIN */
+
 async function checkCode(){
 
   if(!getAdminCode()){
 
-    codeIsValid =
-      false;
-
     setCodeStatus(
-      "Enter the shared HR upload code first.",
+      "Enter the shared admin code first.",
       "bad"
     );
 
@@ -649,17 +785,16 @@ async function checkCode(){
 
   try{
 
-    await adminAction({
-      action:"validate"
-    });
+    await adminAction(
+      "validate"
+    );
 
     codeIsValid =
       true;
 
-    setCodeStatus(
-      "Code correct. You can now load the playlist or upload content.",
-      "good"
-    );
+    showAdmin();
+
+    await loadPlaylist();
 
   }catch(error){
 
@@ -667,7 +802,7 @@ async function checkCode(){
       false;
 
     setCodeStatus(
-      "Code incorrect. Please check and try again.",
+      error.message,
       "bad"
     );
 
@@ -678,578 +813,285 @@ async function checkCode(){
   }
 }
 
-function isImage(fileType){
+/* FILES */
 
-  return fileType &&
-    fileType.startsWith("image/");
+function extensionOf(filename){
+
+  const parts =
+    filename
+      .toLowerCase()
+      .split(".");
+
+  return parts.length > 1
+    ? parts.pop()
+    : "";
 }
 
-function isVideo(fileType){
+function acceptedFile(file){
 
-  return fileType &&
-    fileType.startsWith("video/");
+  return [
+    "png",
+    "jpg",
+    "jpeg",
+    "webp",
+    "gif",
+    "mp4",
+    "mov"
+  ].includes(
+    extensionOf(
+      file.name
+    )
+  );
 }
 
-function isAcceptedFile(file){
+function videoFile(file){
 
-  return isImage(file.type) ||
-    isVideo(file.type);
+  return [
+    "mp4",
+    "mov"
+  ].includes(
+    extensionOf(
+      file.name
+    )
+  );
 }
 
-function isPublishedValue(value){
+function contentType(file){
 
-  return value === true ||
-    value === "true" ||
-    value === 1 ||
-    value === "1";
+  const types = {
+    png:"image/png",
+    jpg:"image/jpeg",
+    jpeg:"image/jpeg",
+    webp:"image/webp",
+    gif:"image/gif",
+    mp4:"video/mp4",
+    mov:"video/quicktime"
+  };
+
+  return types[
+    extensionOf(
+      file.name
+    )
+  ];
 }
 
-function getFileNameWithoutExtension(fileName){
+function filenameTitle(filename){
 
-  return fileName
-    .replace(/\.[^/.]+$/,"")
+  return filename
+    .replace(
+      /\.[^/.]+$/,
+      ""
+    )
     .trim();
 }
 
-function getDefaultDurationSeconds(){
+function defaultDuration(){
 
   const value =
     Number(
-      durationInput.value || 10
+      durationInput.value
     );
 
-  if(Number.isNaN(value) || value < 1){
+  if(
+    !Number.isFinite(value) ||
+    value < 1
+  ){
     return 10;
   }
 
   return Math.round(value);
 }
 
-function getVideoDurationSeconds(file){
+function videoDuration(file){
 
-  return new Promise(resolve => {
+  return new Promise(
+    resolve => {
 
-    const objectUrl =
-      URL.createObjectURL(file);
-
-    const video =
-      document.createElement("video");
-
-    video.preload =
-      "metadata";
-
-    video.onloadedmetadata =
-      () => {
-
-        const duration =
-          video.duration;
-
-        URL.revokeObjectURL(
-          objectUrl
+      const objectUrl =
+        URL.createObjectURL(
+          file
         );
 
-        if(
-          Number.isFinite(duration) &&
-          duration > 0
-        ){
+      const video =
+        document.createElement(
+          "video"
+        );
 
-          resolve(
-            Math.ceil(duration)
+      video.preload =
+        "metadata";
+
+      video.onloadedmetadata =
+        () => {
+
+          const duration =
+            video.duration;
+
+          URL.revokeObjectURL(
+            objectUrl
           );
 
-          return;
-        }
+          if(
+            Number.isFinite(duration) &&
+            duration > 0
+          ){
 
-        resolve(
-          getDefaultDurationSeconds()
-        );
-      };
+            resolve(
+              Math.ceil(duration)
+            );
 
-    video.onerror =
-      () => {
+          }else{
 
-        URL.revokeObjectURL(
-          objectUrl
-        );
+            resolve(
+              defaultDuration()
+            );
+          }
+        };
 
-        resolve(
-          getDefaultDurationSeconds()
-        );
-      };
+      video.onerror =
+        () => {
 
-    video.src =
-      objectUrl;
-  });
+          URL.revokeObjectURL(
+            objectUrl
+          );
+
+          resolve(
+            defaultDuration()
+          );
+        };
+
+      video.src =
+        objectUrl;
+    }
+  );
 }
 
-async function getDurationForFile(file){
+async function durationFor(file){
 
-  if(isVideo(file.type)){
+  if(videoFile(file)){
 
-    return await getVideoDurationSeconds(
+    return await videoDuration(
       file
     );
   }
 
-  return getDefaultDurationSeconds();
+  return defaultDuration();
 }
 
-function renderPreview(item){
-
-  const preview =
-    document.createElement("div");
-
-  preview.className =
-    "preview";
-
-  if(isImage(item.file_type)){
-
-    const img =
-      document.createElement("img");
-
-    img.src =
-      item.public_url;
-
-    img.alt =
-      item.title || "Image";
-
-    preview.appendChild(img);
-
-  }else if(isVideo(item.file_type)){
-
-    const video =
-      document.createElement("video");
-
-    video.src =
-      item.public_url;
-
-    video.muted =
-      true;
-
-    preview.appendChild(video);
-
-  }else{
-
-    preview.innerText =
-      "FILE";
-  }
-
-  return preview;
-}
-
-function renderItem(item){
-
-  const row =
-    document.createElement("div");
-
-  row.className =
-    "item";
-
-  row.dataset.id =
-    item.id;
-
-  const left =
-    document.createElement("div");
-
-  const handle =
-    document.createElement("div");
-
-  handle.className =
-    "handle";
-
-  handle.innerText =
-    "DRAG";
-
-  left.appendChild(handle);
-  left.appendChild(renderPreview(item));
-
-  const right =
-    document.createElement("div");
-
-  const controls =
-    document.createElement("div");
-
-  controls.className =
-    "item-controls";
-
-  const titleField =
-    document.createElement("div");
-
-  titleField.className =
-    "field";
-
-  const titleLabel =
-    document.createElement("label");
-
-  titleLabel.innerText =
-    "Title";
-
-  const titleBox =
-    document.createElement("input");
-
-  titleBox.value =
-    item.title || "";
-
-  titleBox.className =
-    "item-title-input";
-
-  titleField.appendChild(titleLabel);
-  titleField.appendChild(titleBox);
-
-  const durationField =
-    document.createElement("div");
-
-  durationField.className =
-    "field";
-
-  const durationLabel =
-    document.createElement("label");
-
-  durationLabel.innerText =
-    "Seconds";
-
-  const durationBox =
-    document.createElement("input");
-
-  durationBox.type =
-    "number";
-
-  durationBox.min =
-    "1";
-
-  durationBox.value =
-    item.duration_seconds || 10;
-
-  durationBox.className =
-    "item-duration-input";
-
-  durationField.appendChild(durationLabel);
-  durationField.appendChild(durationBox);
-
-  const activeField =
-    document.createElement("div");
-
-  activeField.className =
-    "checkbox-row";
-
-  const activeBox =
-    document.createElement("input");
-
-  activeBox.type =
-    "checkbox";
-
-  activeBox.checked =
-    isPublishedValue(
-      item.is_active
-    );
-
-  activeBox.className =
-    "item-active-input";
-
-  const activeLabel =
-    document.createElement("span");
-
-  activeLabel.innerText =
-    "Published";
-
-  activeField.appendChild(activeBox);
-  activeField.appendChild(activeLabel);
-
-  controls.appendChild(titleField);
-  controls.appendChild(durationField);
-  controls.appendChild(activeField);
-
-  const actions =
-    document.createElement("div");
-
-  actions.className =
-    "item-actions";
-
-  const saveButton =
-    document.createElement("button");
-
-  saveButton.innerText =
-    "Save Item";
-
-  saveButton.className =
-    "success";
-
-  saveButton.addEventListener(
-    "click",
-    async () => {
-
-      if(!requireValidCode()){
-        return;
-      }
-
-      try{
-
-        await adminAction({
-          action:"update",
-          id:item.id,
-          title:titleBox.value,
-          durationSeconds:durationBox.value,
-          isActive:activeBox.checked
-        });
-
-        setStatus(
-          "Item saved.",
-          "good"
-        );
-
-        await loadPlaylist();
-
-      }catch(error){
-
-        setStatus(
-          error.message,
-          "bad"
-        );
-      }
-    }
-  );
-
-  const deleteButton =
-    document.createElement("button");
-
-  deleteButton.innerText =
-    "Delete";
-
-  deleteButton.className =
-    "danger";
-
-  deleteButton.addEventListener(
-    "click",
-    async () => {
-
-      if(!requireValidCode()){
-        return;
-      }
-
-      const ok =
-        confirm(
-          "Delete this item from the playlist?"
-        );
-
-      if(!ok){
-        return;
-      }
-
-      try{
-
-        await adminAction({
-          action:"delete",
-          id:item.id
-        });
-
-        setStatus(
-          "Item deleted.",
-          "good"
-        );
-
-        await loadPlaylist();
-
-      }catch(error){
-
-        setStatus(
-          error.message,
-          "bad"
-        );
-      }
-    }
-  );
-
-  actions.appendChild(saveButton);
-  actions.appendChild(deleteButton);
-
-  right.appendChild(controls);
-  right.appendChild(actions);
-
-  row.appendChild(left);
-  row.appendChild(right);
-
-  return row;
-}
-
-function renderPlaylist(items){
-
-  playlist.innerHTML =
-    "";
-
-  if(!items.length){
-
-    playlist.innerHTML =
-      '<div class="empty">No playlist items yet.</div>';
-
-    return;
-  }
-
-  items.forEach(item => {
-
-    playlist.appendChild(
-      renderItem(item)
-    );
-  });
-
-  if(sortable){
-    sortable.destroy();
-  }
-
-  sortable =
-    new Sortable(
-      playlist,
-      {
-        animation:150,
-        handle:".handle",
-        ghostClass:"dragging"
-      }
-    );
-}
-
-async function loadPlaylist(){
-
-  if(!requireValidCode()){
-    return;
-  }
-
-  try{
-
-    const data =
-      await adminAction({
-        action:"list"
-      });
-
-    renderPlaylist(
-      data.items || []
-    );
-
-    setStatus(
-      "Playlist loaded.",
-      "good"
-    );
-
-  }catch(error){
-
-    setStatus(
-      error.message,
-      "bad"
-    );
-  }
-}
-
-async function uploadSingleFile(file,index,total){
-
-  if(!isAcceptedFile(file)){
+/* UPLOAD */
+
+async function uploadOne(
+  file,
+  position,
+  total
+){
+
+  if(!acceptedFile(file)){
 
     throw new Error(
-      "Unsupported file type: " +
-      file.name +
-      ". Accepted files are PNG, JPG, WEBP, GIF, and MP4."
+      "Unsupported file: " +
+      file.name
     );
   }
 
-  const typedTitle =
+  if(
+    file.size >
+    MAX_FILE_SIZE
+  ){
+
+    throw new Error(
+      file.name +
+      " exceeds the 50 MB limit."
+    );
+  }
+
+  const duration =
+    await durationFor(file);
+
+  const enteredTitle =
     titleInput.value.trim();
 
-  let uploadTitle =
-    "";
+  const title =
+    total === 1 &&
+    enteredTitle
+      ? enteredTitle
+      : filenameTitle(
+          file.name
+        );
 
-  if(total === 1 && typedTitle){
-
-    uploadTitle =
-      typedTitle;
-
-  }else{
-
-    uploadTitle =
-      getFileNameWithoutExtension(
-        file.name
-      );
-  }
-
-  const durationForThisFile =
-    await getDurationForFile(
-      file
+  const url =
+    new URL(
+      cleanWorkerUrl() +
+      "/api/admin/upload"
     );
 
-  const formData =
-    new FormData();
-
-  formData.append(
-    "action",
-    "upload"
+  url.searchParams.set(
+    "filename",
+    file.name
   );
 
-  formData.append(
-    "adminCode",
-    getAdminCode()
-  );
-
-  formData.append(
+  url.searchParams.set(
     "title",
-    uploadTitle
+    title
   );
 
-  formData.append(
-    "durationSeconds",
-    String(durationForThisFile)
+  url.searchParams.set(
+    "duration",
+    duration
   );
 
-  formData.append(
-    "file",
-    file
-  );
-
-  let uploadMessage =
-    "Uploading file " +
-    index +
+  setStatus(
+    "Uploading " +
+    position +
     " of " +
     total +
     ": " +
-    file.name;
-
-  if(isVideo(file.type)){
-
-    uploadMessage =
-      uploadMessage +
-      " (" +
-      durationForThisFile +
-      " sec video)";
-  }
-
-  setStatus(
-    uploadMessage,
-    ""
+    file.name
   );
 
   const response =
     await fetch(
-      FUNCTION_URL,
+      url,
       {
         method:"POST",
+
         headers:{
-          "apikey":SUPABASE_ANON_KEY,
-          "Authorization":"Bearer " + SUPABASE_ANON_KEY
+          "X-Admin-Code":
+            getAdminCode(),
+
+          "X-File-Size":
+            String(
+              file.size
+            ),
+
+          "Content-Type":
+            contentType(file)
         },
-        body:formData
+
+        body:file
       }
     );
 
   const data =
-    await response.json();
+    await response.json()
+      .catch(
+        () => ({})
+      );
 
-  if(!response.ok || data.error){
+  if(
+    !response.ok ||
+    data.error
+  ){
+
     throw new Error(
-      data.error || "Upload failed."
+      data.error ||
+      "Upload failed."
     );
   }
-
-  return data;
 }
 
-async function uploadFile(){
+async function uploadFiles(){
 
-  if(!requireValidCode()){
+  if(!codeIsValid){
     return;
   }
 
@@ -1261,11 +1103,42 @@ async function uploadFile(){
   if(!files.length){
 
     setStatus(
-      "Choose at least one file first.",
+      "Choose at least one file.",
       "bad"
     );
 
     return;
+  }
+
+  for(
+    const file
+    of files
+  ){
+
+    if(!acceptedFile(file)){
+
+      setStatus(
+        "Unsupported file: " +
+        file.name,
+        "bad"
+      );
+
+      return;
+    }
+
+    if(
+      file.size >
+      MAX_FILE_SIZE
+    ){
+
+      setStatus(
+        file.name +
+        " exceeds the 50 MB maximum.",
+        "bad"
+      );
+
+      return;
+    }
   }
 
   uploadButton.disabled =
@@ -1273,9 +1146,13 @@ async function uploadFile(){
 
   try{
 
-    for(let i = 0; i < files.length; i++){
+    for(
+      let i = 0;
+      i < files.length;
+      i++
+    ){
 
-      await uploadSingleFile(
+      await uploadOne(
         files[i],
         i + 1,
         files.length
@@ -1292,9 +1169,8 @@ async function uploadFile(){
       "";
 
     setStatus(
-      "Upload complete. " +
       files.length +
-      " file(s) added to playlist. Videos used their actual length.",
+      " file(s) uploaded.",
       "good"
     );
 
@@ -1314,39 +1190,419 @@ async function uploadFile(){
   }
 }
 
-async function saveOrder(){
+/* PLAYLIST */
 
-  if(!requireValidCode()){
-    return;
-  }
+function renderPreview(item){
 
-  const ids =
-    Array
-      .from(
-        playlist.querySelectorAll(".item")
-      )
-      .map(item => item.dataset.id)
-      .filter(Boolean);
-
-  if(!ids.length){
-
-    setStatus(
-      "No playlist items to save.",
-      "bad"
+  const preview =
+    document.createElement(
+      "div"
     );
 
+  preview.className =
+    "preview";
+
+  if(
+    item.file_type &&
+    item.file_type.startsWith(
+      "image/"
+    )
+  ){
+
+    const image =
+      document.createElement(
+        "img"
+      );
+
+    image.src =
+      item.media_url;
+
+    preview.appendChild(
+      image
+    );
+
+  }else if(
+    item.file_type &&
+    item.file_type.startsWith(
+      "video/"
+    )
+  ){
+
+    const video =
+      document.createElement(
+        "video"
+      );
+
+    video.src =
+      item.media_url;
+
+    video.muted =
+      true;
+
+    video.preload =
+      "metadata";
+
+    preview.appendChild(
+      video
+    );
+  }
+
+  return preview;
+}
+
+function renderItem(item){
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+  row.className =
+    "item";
+
+  row.dataset.id =
+    item.id;
+
+  const left =
+    document.createElement(
+      "div"
+    );
+
+  const handle =
+    document.createElement(
+      "div"
+    );
+
+  handle.className =
+    "handle";
+
+  handle.innerText =
+    "DRAG";
+
+  left.appendChild(
+    handle
+  );
+
+  left.appendChild(
+    renderPreview(item)
+  );
+
+  const right =
+    document.createElement(
+      "div"
+    );
+
+  const controls =
+    document.createElement(
+      "div"
+    );
+
+  controls.className =
+    "item-controls";
+
+  const titleField =
+    document.createElement(
+      "div"
+    );
+
+  titleField.className =
+    "field";
+
+  titleField.innerHTML =
+    "<label>Title</label>";
+
+  const titleBox =
+    document.createElement(
+      "input"
+    );
+
+  titleBox.className =
+    "item-title-input";
+
+  titleBox.value =
+    item.title || "";
+
+  titleField.appendChild(
+    titleBox
+  );
+
+  const durationField =
+    document.createElement(
+      "div"
+    );
+
+  durationField.className =
+    "field";
+
+  durationField.innerHTML =
+    "<label>Seconds</label>";
+
+  const durationBox =
+    document.createElement(
+      "input"
+    );
+
+  durationBox.type =
+    "number";
+
+  durationBox.min =
+    "1";
+
+  durationBox.className =
+    "item-duration-input";
+
+  durationBox.value =
+    item.duration_seconds ||
+    10;
+
+  durationField.appendChild(
+    durationBox
+  );
+
+  const publishField =
+    document.createElement(
+      "div"
+    );
+
+  publishField.className =
+    "checkbox-row";
+
+  const publishBox =
+    document.createElement(
+      "input"
+    );
+
+  publishBox.type =
+    "checkbox";
+
+  publishBox.className =
+    "item-active-input";
+
+  publishBox.checked =
+    item.is_active === true;
+
+  const publishText =
+    document.createElement(
+      "span"
+    );
+
+  publishText.innerText =
+    "Published";
+
+  publishField.appendChild(
+    publishBox
+  );
+
+  publishField.appendChild(
+    publishText
+  );
+
+  controls.appendChild(
+    titleField
+  );
+
+  controls.appendChild(
+    durationField
+  );
+
+  controls.appendChild(
+    publishField
+  );
+
+  const actions =
+    document.createElement(
+      "div"
+    );
+
+  actions.className =
+    "item-actions";
+
+  const deleteButton =
+    document.createElement(
+      "button"
+    );
+
+  deleteButton.className =
+    "danger";
+
+  deleteButton.innerText =
+    "Delete";
+
+  deleteButton.onclick =
+    async () => {
+
+      if(
+        !confirm(
+          "Delete this item?"
+        )
+      ){
+        return;
+      }
+
+      try{
+
+        await adminAction(
+          "delete",
+          {
+            id:item.id
+          }
+        );
+
+        setStatus(
+          "Item deleted.",
+          "good"
+        );
+
+        await loadPlaylist();
+
+      }catch(error){
+
+        setStatus(
+          error.message,
+          "bad"
+        );
+      }
+    };
+
+  actions.appendChild(
+    deleteButton
+  );
+
+  right.appendChild(
+    controls
+  );
+
+  right.appendChild(
+    actions
+  );
+
+  row.appendChild(
+    left
+  );
+
+  row.appendChild(
+    right
+  );
+
+  return row;
+}
+
+function renderPlaylist(items){
+
+  playlist.innerHTML =
+    "";
+
+  if(!items.length){
+
+    playlist.innerHTML =
+      '<div class="empty">No playlist items yet.</div>';
+
     return;
   }
+
+  items.forEach(
+    item => {
+
+      playlist.appendChild(
+        renderItem(item)
+      );
+    }
+  );
+
+  if(sortable){
+    sortable.destroy();
+  }
+
+  sortable =
+    new Sortable(
+      playlist,
+      {
+        animation:150,
+        handle:".handle",
+        ghostClass:"dragging"
+      }
+    );
+}
+
+async function loadPlaylist(){
 
   try{
 
-    await adminAction({
-      action:"reorder",
-      order:ids
-    });
+    const data =
+      await adminAction(
+        "list"
+      );
+
+    renderPlaylist(
+      data.items || []
+    );
+
+  }catch(error){
 
     setStatus(
-      "Playlist order saved.",
+      error.message,
+      "bad"
+    );
+  }
+}
+
+async function savePlaylist(){
+
+  const rows =
+    Array.from(
+      playlist.querySelectorAll(
+        ".item"
+      )
+    );
+
+  if(!rows.length){
+    return;
+  }
+
+  const items =
+    rows.map(
+      row => {
+
+        return {
+          id:
+            row.dataset.id,
+
+          title:
+            row.querySelector(
+              ".item-title-input"
+            ).value,
+
+          durationSeconds:
+            row.querySelector(
+              ".item-duration-input"
+            ).value,
+
+          isActive:
+            row.querySelector(
+              ".item-active-input"
+            ).checked
+        };
+      }
+    );
+
+  savePlaylistButton.disabled =
+    true;
+
+  setStatus(
+    "Saving playlist changes..."
+  );
+
+  try{
+
+    await adminAction(
+      "savePlaylist",
+      {
+        items:items
+      }
+    );
+
+    setStatus(
+      "Playlist changes saved.",
       "good"
     );
 
@@ -1358,135 +1614,57 @@ async function saveOrder(){
       error.message,
       "bad"
     );
+
+  }finally{
+
+    savePlaylistButton.disabled =
+      false;
   }
 }
 
-function rememberCodeThisSession(){
+/* EVENTS */
 
-  if(!getAdminCode()){
+checkCodeButton.onclick =
+  checkCode;
 
-    setCodeStatus(
-      "Enter the shared HR upload code first.",
-      "bad"
-    );
+toggleCodeButton.onclick =
+  toggleCode;
 
-    return;
+uploadButton.onclick =
+  uploadFiles;
+
+savePlaylistButton.onclick =
+  savePlaylist;
+
+refreshButton.onclick =
+  loadPlaylist;
+
+lockButton.onclick =
+  lockAdmin;
+
+adminCodeInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Enter"
+    ){
+
+      checkCode();
+    }
   }
-
-  sessionStorage.setItem(
-    "hrAdminCode",
-    getAdminCode()
-  );
-
-  setStatus(
-    "Code remembered for this browser tab.",
-    "good"
-  );
-}
-
-toggleCodeButton.addEventListener(
-  "click",
-  toggleCodeVisibility
-);
-
-checkCodeButton.addEventListener(
-  "click",
-  checkCode
 );
 
 adminCodeInput.addEventListener(
   "input",
-  resetCodeValidation
-);
+  () => {
 
-uploadButton.addEventListener(
-  "click",
-  uploadFile
-);
-
-loadButton.addEventListener(
-  "click",
-  loadPlaylist
-);
-
-refreshButton.addEventListener(
-  "click",
-  loadPlaylist
-);
-
-saveOrderButton.addEventListener(
-  "click",
-  saveOrder
-);
-
-rememberButton.addEventListener(
-  "click",
-  rememberCodeThisSession
-);
-
-fileInput.addEventListener(
-  "change",
-  async () => {
-
-    const files =
-      Array.from(
-        fileInput.files || []
-      );
-
-    if(!files.length){
-      return;
-    }
-
-    const unsupportedFiles =
-      files.filter(file => !isAcceptedFile(file));
-
-    if(unsupportedFiles.length){
-
-      setStatus(
-        "Unsupported file selected. Accepted files are PNG, JPG, WEBP, GIF, and MP4.",
-        "bad"
-      );
-
-      return;
-    }
-
-    const videoFiles =
-      files.filter(file => isVideo(file.type));
-
-    if(videoFiles.length){
-
-      setStatus(
-        files.length +
-        " file(s) selected. Video items will use their actual length. Images use the default duration.",
-        "good"
-      );
-
-      return;
-    }
-
-    setStatus(
-      files.length +
-      " file(s) selected. For best display, use 1920 x 1080.",
-      "good"
-    );
+    codeIsValid =
+      false;
   }
 );
 
-const savedCode =
-  sessionStorage.getItem(
-    "hrAdminCode"
-  );
-
-if(savedCode){
-
-  adminCodeInput.value =
-    savedCode;
-
-  setCodeStatus(
-    "Saved code found. Click Check Code to verify it.",
-    "neutral"
-  );
-}
 </script>
 
 </body>
