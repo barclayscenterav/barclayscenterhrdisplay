@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HR Display Playlist</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+  Barclays Center Employee Lounge
+</title>
 
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -14,43 +22,77 @@
 html,
 body{
   margin:0;
-  padding:0;
   width:100%;
   height:100%;
   overflow:hidden;
   background:#020617;
+}
+
+body{
   font-family:Arial,sans-serif;
 }
+
+/* =========================
+   MAIN STAGE
+========================= */
 
 #stage{
   position:fixed;
   inset:0;
   overflow:hidden;
+
   background-color:#020617;
-  background-image:url("background.png");
+
+  /*
+    Keep background.jpg in the
+    same GitHub folder as index.html
+  */
+  background-image:url("background.jpg");
+
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
 }
 
+/*
+  Slight dark overlay over the
+  background image.
+
+  Playlist media sits above this.
+*/
 #stage::after{
   content:"";
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.15);
+
+  background:
+    rgba(0,0,0,0.15);
+
   z-index:0;
+
   pointer-events:none;
 }
+
+/* =========================
+   MEDIA LAYERS
+========================= */
 
 .layer{
   position:absolute;
   inset:0;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   opacity:0;
-  transition:opacity 0.6s ease;
+
+  transition:
+    opacity 0.6s ease;
+
   z-index:1;
+
+  pointer-events:none;
 }
 
 .layer.active{
@@ -61,73 +103,99 @@ body{
 .media{
   width:100%;
   height:100%;
+
+  /*
+    Shows the entire image/video
+    without stretching it.
+
+    background.jpg remains visible
+    around content that is not 16:9.
+  */
   object-fit:contain;
-  background:transparent;
+
+  object-position:center;
+
   display:block;
+
+  background:transparent;
 }
 
-iframe.media{
-  border:none;
-  background:white;
-}
-
-#empty{
-  position:fixed;
-  inset:0;
-  background:#020617;
-  color:#cbd5e1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-size:2rem;
-  padding:30px;
-  line-height:1.35;
-  z-index:10;
-}
-
-.hidden{
-  display:none !important;
-}
 </style>
 </head>
 
 <body>
 
 <div id="stage">
-  <div id="layerA" class="layer active"></div>
-  <div id="layerB" class="layer"></div>
+
+  <div
+    id="layerA"
+    class="layer"
+  ></div>
+
+  <div
+    id="layerB"
+    class="layer"
+  ></div>
+
 </div>
 
-<div id="empty">
-  Loading playlist...
-</div>
+<script>
 
-<script type="module">
-import {
-  createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+/* =================================================
+   CLOUDFLARE WORKER
+================================================= */
 
-const SUPABASE_URL =
-  "https://scnlepcadipdhhzppovq.supabase.co";
+const WORKER_URL =
+  "https://barclays-employee-lounge-api.barclayscenterav.workers.dev";
 
-const SUPABASE_ANON_KEY =
-  "sb_publishable_FSLIkrVTT9GkAxXjTWoWTw_g9_BsURe";
+/* =================================================
+   SETTINGS
+================================================= */
 
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+/*
+  Check GitHub/Worker for playlist
+  changes every 15 seconds.
+*/
+const PLAYLIST_CHECK_INTERVAL =
+  15000;
+
+/*
+  Crossfade length between items.
+*/
+const FADE_TIME =
+  600;
+
+/*
+  If media fails to load, wait this
+  long before moving to another item.
+*/
+const FAILED_MEDIA_DELAY =
+  1500;
+
+/*
+  Maximum amount of time we'll wait
+  for a video to become playable.
+*/
+const VIDEO_LOAD_TIMEOUT =
+  20000;
+
+/* =================================================
+   ELEMENTS
+================================================= */
 
 const layerA =
-  document.getElementById("layerA");
+  document.getElementById(
+    "layerA"
+  );
 
 const layerB =
-  document.getElementById("layerB");
+  document.getElementById(
+    "layerB"
+  );
 
-const empty =
-  document.getElementById("empty");
+/* =================================================
+   PLAYER STATE
+================================================= */
 
 let playlist =
   [];
@@ -135,485 +203,928 @@ let playlist =
 let currentIndex =
   0;
 
+let currentItemId =
+  null;
+
 let activeLayer =
   layerA;
 
-let standbyLayer =
+let inactiveLayer =
   layerB;
 
-let timer =
+let playbackTimer =
   null;
 
-let hasStarted =
+let transitionNumber =
+  0;
+
+let refreshRunning =
   false;
 
-let isSwitching =
+let playerStarted =
   false;
 
-let realtimeChannel =
-  null;
+/* =================================================
+   BASIC HELPERS
+================================================= */
 
-function isImage(fileType){
+function cleanWorkerUrl(){
 
-  return fileType &&
-    fileType.startsWith("image/");
+  return WORKER_URL
+    .replace(/\/+$/,"");
 }
 
-function isVideo(fileType){
+function clearPlaybackTimer(){
 
-  return fileType &&
-    fileType.startsWith("video/");
-}
+  if(playbackTimer){
 
-function isPdf(fileType){
+    clearTimeout(
+      playbackTimer
+    );
 
-  return fileType === "application/pdf";
-}
-
-function clearTimer(){
-
-  if(timer){
-    clearTimeout(timer);
-    timer = null;
+    playbackTimer =
+      null;
   }
 }
 
-function hideEmpty(){
+/* =================================================
+   LAYER CLEANUP
+================================================= */
 
-  empty.classList.add(
-    "hidden"
-  );
-}
+function clearLayer(layer){
 
-function showEmpty(message){
-
-  clearTimer();
-
-  empty.innerText =
-    message;
-
-  empty.classList.remove(
-    "hidden"
-  );
-}
-
-function scheduleNext(seconds){
-
-  const safeSeconds =
-    Math.max(
-      1,
-      Number(seconds || 10)
+  const videos =
+    layer.querySelectorAll(
+      "video"
     );
 
-  timer =
-    setTimeout(
-      nextItem,
-      safeSeconds * 1000
-    );
-}
+  videos.forEach(
+    video => {
 
-function swapLayers(){
+      try{
+        video.pause();
+      }catch(error){}
 
-  standbyLayer.classList.add(
-    "active"
-  );
+      video.removeAttribute(
+        "src"
+      );
 
-  activeLayer.classList.remove(
-    "active"
-  );
-
-  const oldLayer =
-    activeLayer;
-
-  activeLayer =
-    standbyLayer;
-
-  standbyLayer =
-    oldLayer;
-
-  setTimeout(
-    () => {
-
-      standbyLayer.innerHTML =
-        "";
-
-    },
-    700
-  );
-}
-
-function createImageElement(item){
-
-  return new Promise(resolve => {
-
-    const img =
-      document.createElement("img");
-
-    img.src =
-      item.public_url;
-
-    img.alt =
-      "";
-
-    img.className =
-      "media";
-
-    img.onload =
-      () => resolve(img);
-
-    img.onerror =
-      () => resolve(null);
-  });
-}
-
-function createVideoElement(item){
-
-  return new Promise(resolve => {
-
-    const video =
-      document.createElement("video");
-
-    video.src =
-      item.public_url;
-
-    video.className =
-      "media";
-
-    video.autoplay =
-      true;
-
-    video.muted =
-      true;
-
-    video.playsInline =
-      true;
-
-    video.controls =
-      false;
-
-    video.preload =
-      "auto";
-
-    let resolved =
-      false;
-
-    function finish(){
-
-      if(resolved){
-        return;
-      }
-
-      resolved =
-        true;
-
-      resolve(video);
+      try{
+        video.load();
+      }catch(error){}
     }
+  );
 
-    video.addEventListener(
-      "loadeddata",
-      finish,
-      {
-        once:true
-      }
-    );
-
-    video.addEventListener(
-      "canplay",
-      finish,
-      {
-        once:true
-      }
-    );
-
-    video.addEventListener(
-      "error",
-      () => resolve(null),
-      {
-        once:true
-      }
-    );
-
-    setTimeout(
-      finish,
-      2000
-    );
-
-    video.load();
-  });
-}
-
-function createPdfElement(item){
-
-  return new Promise(resolve => {
-
-    const iframe =
-      document.createElement("iframe");
-
-    iframe.src =
-      item.public_url;
-
-    iframe.className =
-      "media";
-
-    iframe.onload =
-      () => resolve(iframe);
-
-    setTimeout(
-      () => resolve(iframe),
-      800
-    );
-  });
-}
-
-async function createMediaElement(item){
-
-  if(isImage(item.file_type)){
-
-    return await createImageElement(
-      item
-    );
-  }
-
-  if(isVideo(item.file_type)){
-
-    return await createVideoElement(
-      item
-    );
-  }
-
-  if(isPdf(item.file_type)){
-
-    return await createPdfElement(
-      item
-    );
-  }
-
-  return null;
-}
-
-async function showItem(index){
-
-  if(isSwitching){
-    return;
-  }
-
-  clearTimer();
-
-  if(!playlist.length){
-
-    showEmpty(
-      "No active playlist items."
-    );
-
-    return;
-  }
-
-  const item =
-    playlist[index];
-
-  if(!item){
-
-    showEmpty(
-      "Playlist item could not be loaded."
-    );
-
-    return;
-  }
-
-  isSwitching =
-    true;
-
-  const mediaElement =
-    await createMediaElement(
-      item
-    );
-
-  if(!mediaElement){
-
-    isSwitching =
-      false;
-
-    scheduleNext(
-      3
-    );
-
-    return;
-  }
-
-  standbyLayer.innerHTML =
+  layer.innerHTML =
     "";
 
-  standbyLayer.appendChild(
-    mediaElement
+  layer.classList.remove(
+    "active"
+  );
+}
+
+function clearEverything(){
+
+  transitionNumber++;
+
+  clearPlaybackTimer();
+
+  clearLayer(
+    layerA
   );
 
-  hideEmpty();
-
-  swapLayers();
-
-  if(isVideo(item.file_type)){
-
-    mediaElement.currentTime =
-      0;
-
-    mediaElement.play().catch(() => {});
-
-    mediaElement.addEventListener(
-      "ended",
-      nextItem,
-      {
-        once:true
-      }
-    );
-  }
-
-  scheduleNext(
-    item.duration_seconds
+  clearLayer(
+    layerB
   );
 
-  isSwitching =
+  activeLayer =
+    layerA;
+
+  inactiveLayer =
+    layerB;
+
+  currentItemId =
+    null;
+
+  currentIndex =
+    0;
+
+  playerStarted =
     false;
 }
 
-function nextItem(){
+/* =================================================
+   FETCH PLAYLIST
+================================================= */
 
-  clearTimer();
+async function fetchPlaylist(){
 
-  if(!playlist.length){
+  const url =
+    cleanWorkerUrl() +
+    "/api/playlist?t=" +
+    Date.now();
 
-    showEmpty(
-      "No active playlist items."
+  const response =
+    await fetch(
+      url,
+      {
+        method:"GET",
+
+        cache:"no-store",
+
+        headers:{
+          "Accept":
+            "application/json"
+        }
+      }
     );
 
-    return;
+  if(!response.ok){
+
+    throw new Error(
+      "Unable to load playlist."
+    );
   }
 
-  currentIndex =
-    (currentIndex + 1) % playlist.length;
+  const data =
+    await response.json();
 
-  showItem(
-    currentIndex
-  );
+  if(
+    !data ||
+    !Array.isArray(
+      data.items
+    )
+  ){
+
+    return [];
+  }
+
+  return data.items;
 }
 
-async function loadPlaylist(options = {}){
+/* =================================================
+   REFRESH PLAYLIST
+================================================= */
 
-  const shouldRestart =
-    options.restart === true;
+async function refreshPlaylist(){
 
-  const shouldKeepCurrent =
-    options.keepCurrent === true;
-
-  const oldId =
-    playlist[currentIndex]?.id || null;
-
-  const result =
-    await supabase
-      .from("playlist_items")
-      .select("*")
-      .eq("is_active",true)
-      .order(
-        "sort_order",
-        {
-          ascending:true
-        }
-      );
-
-  if(result.error){
-
-    showEmpty(
-      "Playlist error. Check Supabase setup."
-    );
-
+  if(refreshRunning){
     return;
   }
 
-  playlist =
-    result.data || [];
+  refreshRunning =
+    true;
 
-  if(!playlist.length){
+  try{
 
-    showEmpty(
-      "No active playlist items."
-    );
+    const newPlaylist =
+      await fetchPlaylist();
 
-    return;
-  }
+    const previousItemId =
+      currentItemId;
 
-  if(shouldKeepCurrent && oldId){
+    playlist =
+      newPlaylist;
 
-    const matchingIndex =
-      playlist.findIndex(
-        item => item.id === oldId
-      );
+    /*
+      Nothing published.
+      Leave only the background visible.
+    */
 
-    if(matchingIndex !== -1){
+    if(!playlist.length){
 
-      currentIndex =
-        matchingIndex;
+      clearEverything();
 
-    }else{
+      return;
+    }
+
+    /*
+      Player has not started yet.
+    */
+
+    if(
+      !playerStarted ||
+      !previousItemId
+    ){
 
       currentIndex =
         0;
+
+      await showCurrentItem();
+
+      return;
     }
 
-  }else if(currentIndex >= playlist.length){
+    /*
+      See whether the currently playing
+      item still exists in the newly
+      loaded playlist.
+    */
+
+    const existingIndex =
+      playlist.findIndex(
+        item =>
+          String(item.id) ===
+          String(previousItemId)
+      );
+
+    if(existingIndex >= 0){
+
+      /*
+        Current item is still published.
+
+        Keep showing it, but update
+        currentIndex so the NEXT item
+        follows the newest saved order.
+      */
+
+      currentIndex =
+        existingIndex;
+
+      return;
+    }
+
+    /*
+      Current item was unpublished
+      or deleted.
+
+      Move immediately to the first
+      available published item.
+    */
+
+    currentIndex =
+      0;
+
+    await showCurrentItem();
+
+  }catch(error){
+
+    console.error(
+      "Playlist refresh error:",
+      error
+    );
+
+  }finally{
+
+    refreshRunning =
+      false;
+  }
+}
+
+/* =================================================
+   IMAGE LOADER
+================================================= */
+
+function createImage(item){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const image =
+        document.createElement(
+          "img"
+        );
+
+      image.className =
+        "media";
+
+      image.alt =
+        "";
+
+      image.draggable =
+        false;
+
+      image.onload =
+        () => {
+
+          resolve(image);
+        };
+
+      image.onerror =
+        () => {
+
+          reject(
+            new Error(
+              "Image failed to load."
+            )
+          );
+        };
+
+      image.src =
+        item.media_url;
+    }
+  );
+}
+
+/* =================================================
+   VIDEO LOADER
+================================================= */
+
+function createVideo(item){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const video =
+        document.createElement(
+          "video"
+        );
+
+      video.className =
+        "media";
+
+      video.autoplay =
+        false;
+
+      video.muted =
+        true;
+
+      video.defaultMuted =
+        true;
+
+      video.playsInline =
+        true;
+
+      video.controls =
+        false;
+
+      video.loop =
+        false;
+
+      video.preload =
+        "auto";
+
+      video.setAttribute(
+        "playsinline",
+        ""
+      );
+
+      video.setAttribute(
+        "webkit-playsinline",
+        ""
+      );
+
+      let finished =
+        false;
+
+      let timeout =
+        null;
+
+      function cleanup(){
+
+        if(timeout){
+
+          clearTimeout(
+            timeout
+          );
+
+          timeout =
+            null;
+        }
+      }
+
+      function ready(){
+
+        if(finished){
+          return;
+        }
+
+        finished =
+          true;
+
+        cleanup();
+
+        resolve(
+          video
+        );
+      }
+
+      function failed(){
+
+        if(finished){
+          return;
+        }
+
+        finished =
+          true;
+
+        cleanup();
+
+        reject(
+          new Error(
+            "Video failed to load or is not supported by this browser."
+          )
+        );
+      }
+
+      /*
+        loadeddata or canplay means we
+        can transition to the video
+        without intentionally showing
+        a blank screen first.
+      */
+
+      video.addEventListener(
+        "loadeddata",
+        ready,
+        {
+          once:true
+        }
+      );
+
+      video.addEventListener(
+        "canplay",
+        ready,
+        {
+          once:true
+        }
+      );
+
+      video.addEventListener(
+        "error",
+        failed,
+        {
+          once:true
+        }
+      );
+
+      video.src =
+        item.media_url;
+
+      video.load();
+
+      timeout =
+        setTimeout(
+          failed,
+          VIDEO_LOAD_TIMEOUT
+        );
+    }
+  );
+}
+
+/* =================================================
+   CREATE MEDIA
+================================================= */
+
+async function createMedia(item){
+
+  const type =
+    String(
+      item.file_type || ""
+    ).toLowerCase();
+
+  if(
+    type.startsWith(
+      "image/"
+    )
+  ){
+
+    return await createImage(
+      item
+    );
+  }
+
+  if(
+    type.startsWith(
+      "video/"
+    )
+  ){
+
+    return await createVideo(
+      item
+    );
+  }
+
+  throw new Error(
+    "Unsupported media type: " +
+    type
+  );
+}
+
+/* =================================================
+   DETERMINE NEXT ITEM
+================================================= */
+
+function moveToNextItem(
+  expectedItemId = null
+){
+
+  /*
+    Prevent an old timer or ended
+    event from advancing a newer item.
+  */
+
+  if(
+    expectedItemId !== null &&
+    String(currentItemId) !==
+    String(expectedItemId)
+  ){
+
+    return;
+  }
+
+  if(!playlist.length){
+
+    clearEverything();
+
+    return;
+  }
+
+  /*
+    Locate current item using the latest
+    playlist order.
+
+    This means reordering the playlist
+    in admin affects the very next item.
+  */
+
+  const currentPosition =
+    playlist.findIndex(
+      item =>
+        String(item.id) ===
+        String(currentItemId)
+    );
+
+  if(currentPosition >= 0){
+
+    currentIndex =
+      (
+        currentPosition + 1
+      ) %
+      playlist.length;
+
+  }else{
 
     currentIndex =
       0;
   }
 
-  if(!hasStarted || shouldRestart){
+  showCurrentItem();
+}
 
-    hasStarted =
-      true;
+/* =================================================
+   PLAY CURRENT ITEM
+================================================= */
 
-    showItem(
-      currentIndex
-    );
+async function showCurrentItem(){
+
+  clearPlaybackTimer();
+
+  if(!playlist.length){
+
+    clearEverything();
+
+    return;
   }
-}
 
-function startRealtimeRefresh(){
+  if(
+    currentIndex < 0 ||
+    currentIndex >=
+      playlist.length
+  ){
 
-  realtimeChannel =
-    supabase
-      .channel("playlist-items-live-refresh")
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"playlist_items"
-        },
-        async () => {
+    currentIndex =
+      0;
+  }
 
-          await loadPlaylist({
-            restart:true,
-            keepCurrent:true
-          });
-        }
+  const item =
+    playlist[
+      currentIndex
+    ];
+
+  /*
+    Each transition gets a unique number.
+
+    If another playlist change occurs
+    while media is still loading, the
+    old transition is ignored.
+  */
+
+  const thisTransition =
+    ++transitionNumber;
+
+  let media;
+
+  try{
+
+    media =
+      await createMedia(
+        item
+      );
+
+  }catch(error){
+
+    console.error(
+      "Media load error:",
+      item,
+      error
+    );
+
+    /*
+      Leave the previous item on screen
+      instead of flashing to black.
+    */
+
+    if(
+      thisTransition ===
+      transitionNumber
+    ){
+
+      playbackTimer =
+        setTimeout(
+          () => {
+
+            moveToNextItem();
+
+          },
+          FAILED_MEDIA_DELAY
+        );
+    }
+
+    return;
+  }
+
+  /*
+    Another transition started while
+    this file was loading.
+  */
+
+  if(
+    thisTransition !==
+    transitionNumber
+  ){
+
+    if(
+      media.tagName ===
+      "VIDEO"
+    ){
+
+      try{
+        media.pause();
+      }catch(error){}
+    }
+
+    return;
+  }
+
+  /*
+    Prepare the hidden layer while the
+    current content remains visible.
+  */
+
+  clearLayer(
+    inactiveLayer
+  );
+
+  inactiveLayer.appendChild(
+    media
+  );
+
+  currentItemId =
+    item.id;
+
+  playerStarted =
+    true;
+
+  /* =========================
+     VIDEO
+  ========================= */
+
+  if(
+    media.tagName ===
+    "VIDEO"
+  ){
+
+    const itemId =
+      item.id;
+
+    media.addEventListener(
+      "ended",
+      () => {
+
+        moveToNextItem(
+          itemId
+        );
+
+      },
+      {
+        once:true
+      }
+    );
+
+    media.addEventListener(
+      "error",
+      () => {
+
+        moveToNextItem(
+          itemId
+        );
+
+      },
+      {
+        once:true
+      }
+    );
+
+    try{
+
+      media.currentTime =
+        0;
+
+      await media.play();
+
+    }catch(error){
+
+      console.error(
+        "Video autoplay/playback error:",
+        error
+      );
+    }
+  }
+
+  /* =========================
+     CROSSFADE
+  ========================= */
+
+  const oldLayer =
+    activeLayer;
+
+  inactiveLayer.classList.add(
+    "active"
+  );
+
+  oldLayer.classList.remove(
+    "active"
+  );
+
+  activeLayer =
+    inactiveLayer;
+
+  inactiveLayer =
+    oldLayer;
+
+  /*
+    Don't remove old content until the
+    fade has completed.
+  */
+
+  setTimeout(
+    () => {
+
+      clearLayer(
+        inactiveLayer
+      );
+
+    },
+    FADE_TIME + 100
+  );
+
+  /* =========================
+     DURATION
+  ========================= */
+
+  const durationSeconds =
+    Math.max(
+      1,
+      Number(
+        item.duration_seconds ||
+        10
       )
-      .subscribe();
+    );
+
+  /*
+    Images always use the playlist
+    duration.
+  */
+
+  if(
+    media.tagName ===
+    "IMG"
+  ){
+
+    playbackTimer =
+      setTimeout(
+        () => {
+
+          moveToNextItem(
+            item.id
+          );
+
+        },
+        durationSeconds *
+        1000
+      );
+
+    return;
+  }
+
+  /*
+    Videos normally advance using their
+    native "ended" event.
+
+    This backup timer prevents a broken
+    browser/player from leaving the
+    display stuck forever.
+  */
+
+  playbackTimer =
+    setTimeout(
+      () => {
+
+        moveToNextItem(
+          item.id
+        );
+
+      },
+      (
+        durationSeconds +
+        5
+      ) *
+      1000
+    );
 }
 
-setInterval(
+/* =================================================
+   TAB / DISPLAY RECOVERY
+================================================= */
+
+document.addEventListener(
+  "visibilitychange",
   () => {
 
-    loadPlaylist({
-      restart:false,
-      keepCurrent:true
-    });
-  },
-  30000
+    if(
+      document.visibilityState !==
+      "visible"
+    ){
+      return;
+    }
+
+    /*
+      Immediately check for playlist
+      changes when the browser/display
+      becomes active again.
+    */
+
+    refreshPlaylist();
+
+    /*
+      Resume active video if the browser
+      paused it while the tab was hidden.
+    */
+
+    const activeVideo =
+      activeLayer.querySelector(
+        "video"
+      );
+
+    if(activeVideo){
+
+      activeVideo
+        .play()
+        .catch(
+          error => {
+
+            console.error(
+              "Unable to resume video:",
+              error
+            );
+          }
+        );
+    }
+  }
 );
 
-loadPlaylist({
-  restart:true
-});
+/* =================================================
+   ONLINE RECOVERY
+================================================= */
 
-startRealtimeRefresh();
+window.addEventListener(
+  "online",
+  () => {
+
+    refreshPlaylist();
+  }
+);
+
+/* =================================================
+   START PLAYER
+================================================= */
+
+refreshPlaylist();
+
+/*
+  Continue checking for changes.
+
+  Changes made in admin should reach
+  the display within approximately
+  15 seconds.
+*/
+
+setInterval(
+  refreshPlaylist,
+  PLAYLIST_CHECK_INTERVAL
+);
+
 </script>
 
 </body>
