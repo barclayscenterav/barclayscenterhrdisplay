@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-05T18:51:55.062Z",
+  "updated_at": "2026-10-05T18:52:06.291Z",
   "items": [
     {
       "id": "601394986",
@@ -72,18 +72,6 @@
       "duration_seconds": 7,
       "is_active": true,
       "created_at": "2026-09-30T16:55:50.849Z",
-      "updated_at": "2026-09-30T17:05:46.561Z"
-    },
-    {
-      "id": "601395399",
-      "title": "18",
-      "asset_id": 601395399,
-      "asset_name": "33e8ba80-e77c-4622-83ee-7c86c0608d25.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/33e8ba80-e77c-4622-83ee-7c86c0608d25.jpg",
-      "duration_seconds": 5,
-      "is_active": true,
-      "created_at": "2026-09-30T16:55:52.946Z",
       "updated_at": "2026-09-30T17:05:46.561Z"
     },
     {
