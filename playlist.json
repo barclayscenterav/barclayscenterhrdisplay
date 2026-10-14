@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-14T12:14:38.052Z",
+  "updated_at": "2026-10-14T12:14:40.566Z",
   "items": [
     {
       "id": "601394986",
@@ -349,6 +349,18 @@
       "is_active": true,
       "created_at": "2026-10-14T12:14:38.052Z",
       "updated_at": "2026-10-14T12:14:38.052Z"
+    },
+    {
+      "id": "640283803",
+      "title": "What’s Happening (2)",
+      "asset_id": 640283803,
+      "asset_name": "7460acd7-dc56-4cb7-ac06-8729ce54c048.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/7460acd7-dc56-4cb7-ac06-8729ce54c048.jpg",
+      "duration_seconds": 10,
+      "is_active": true,
+      "created_at": "2026-10-14T12:14:40.566Z",
+      "updated_at": "2026-10-14T12:14:40.566Z"
     }
   ]
 }
