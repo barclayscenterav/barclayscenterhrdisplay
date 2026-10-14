@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-14T12:14:16.495Z",
+  "updated_at": "2026-10-14T12:14:18.814Z",
   "items": [
     {
       "id": "601394986",
@@ -241,6 +241,18 @@
       "is_active": true,
       "created_at": "2026-10-14T12:14:16.495Z",
       "updated_at": "2026-10-14T12:14:16.495Z"
+    },
+    {
+      "id": "640283037",
+      "title": "Photo Announcement – Variation 2",
+      "asset_id": 640283037,
+      "asset_name": "d2e40460-1b3d-4cd5-bb77-9c437f1a7710.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/d2e40460-1b3d-4cd5-bb77-9c437f1a7710.jpg",
+      "duration_seconds": 10,
+      "is_active": true,
+      "created_at": "2026-10-14T12:14:18.814Z",
+      "updated_at": "2026-10-14T12:14:18.814Z"
     }
   ]
 }
