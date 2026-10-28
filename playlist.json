@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-28T15:49:33.644Z",
+  "updated_at": "2026-10-28T15:53:03.599Z",
   "items": [
     {
       "id": "685484361",
@@ -9,10 +9,10 @@
       "asset_name": "61857480-cc9e-4ae3-b80c-0ee155e1fa13.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/61857480-cc9e-4ae3-b80c-0ee155e1fa13.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:48:12.453Z",
-      "updated_at": "2026-10-28T15:48:12.453Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685484653",
@@ -21,154 +21,10 @@
       "asset_name": "e9c7f1fc-6e99-4ff4-aa88-2d459cd9ed0a.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/e9c7f1fc-6e99-4ff4-aa88-2d459cd9ed0a.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:48:17.287Z",
-      "updated_at": "2026-10-28T15:48:17.287Z"
-    },
-    {
-      "id": "685484856",
-      "title": "4",
-      "asset_id": 685484856,
-      "asset_name": "a37800b4-24f6-4291-bca9-47778f3ddbd3.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a37800b4-24f6-4291-bca9-47778f3ddbd3.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:21.668Z",
-      "updated_at": "2026-10-28T15:48:21.668Z"
-    },
-    {
-      "id": "685485056",
-      "title": "5",
-      "asset_id": 685485056,
-      "asset_name": "3c7d4772-0827-4e48-b6d4-7e908e5958ac.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/3c7d4772-0827-4e48-b6d4-7e908e5958ac.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:25.348Z",
-      "updated_at": "2026-10-28T15:48:25.348Z"
-    },
-    {
-      "id": "685485271",
-      "title": "6",
-      "asset_id": 685485271,
-      "asset_name": "970adc08-d2be-44d3-b98c-726f248d69d9.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/970adc08-d2be-44d3-b98c-726f248d69d9.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:29.328Z",
-      "updated_at": "2026-10-28T15:48:29.328Z"
-    },
-    {
-      "id": "685485508",
-      "title": "11",
-      "asset_id": 685485508,
-      "asset_name": "ae15146c-ac22-4eae-b5d7-7651ce0fb624.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/ae15146c-ac22-4eae-b5d7-7651ce0fb624.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:33.433Z",
-      "updated_at": "2026-10-28T15:48:33.433Z"
-    },
-    {
-      "id": "685485708",
-      "title": "Faces to Know",
-      "asset_id": 685485708,
-      "asset_name": "35c221f4-32da-4eab-a001-eca1390478f3.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/35c221f4-32da-4eab-a001-eca1390478f3.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:37.085Z",
-      "updated_at": "2026-10-28T15:48:37.085Z"
-    },
-    {
-      "id": "685485884",
-      "title": "Photo Announcement – Variation 2",
-      "asset_id": 685485884,
-      "asset_name": "44bbd276-6085-4d89-96e1-7fc47fdbaae5.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/44bbd276-6085-4d89-96e1-7fc47fdbaae5.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:41.113Z",
-      "updated_at": "2026-10-28T15:48:41.113Z"
-    },
-    {
-      "id": "685486081",
-      "title": "Photo Announcement – Variation 3 (2)",
-      "asset_id": 685486081,
-      "asset_name": "2e67e312-f0a4-461f-94b1-7c6e4a2709d5.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/2e67e312-f0a4-461f-94b1-7c6e4a2709d5.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:45.199Z",
-      "updated_at": "2026-10-28T15:48:45.199Z"
-    },
-    {
-      "id": "685486313",
-      "title": "Photo Announcement – Variation 3 (3)",
-      "asset_id": 685486313,
-      "asset_name": "a80c829a-7611-4eb7-85fb-1d9d7b213486.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a80c829a-7611-4eb7-85fb-1d9d7b213486.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:49.180Z",
-      "updated_at": "2026-10-28T15:48:49.180Z"
-    },
-    {
-      "id": "685486547",
-      "title": "Photo Announcement – Variation 3",
-      "asset_id": 685486547,
-      "asset_name": "2639fb26-6947-4a2f-91cb-0d8111ad8187.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/2639fb26-6947-4a2f-91cb-0d8111ad8187.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:53.773Z",
-      "updated_at": "2026-10-28T15:48:53.773Z"
-    },
-    {
-      "id": "685486759",
-      "title": "Quick Info + QR Code – Variation 1",
-      "asset_id": 685486759,
-      "asset_name": "9b9706e6-156f-49ea-9bef-e83b02e90cb3.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/9b9706e6-156f-49ea-9bef-e83b02e90cb3.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:48:57.465Z",
-      "updated_at": "2026-10-28T15:48:57.465Z"
-    },
-    {
-      "id": "685486949",
-      "title": "Quick Info + QR Code – Variation 2",
-      "asset_id": 685486949,
-      "asset_name": "774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:49:01.433Z",
-      "updated_at": "2026-10-28T15:49:01.433Z"
-    },
-    {
-      "id": "685487198",
-      "title": "Quick Info + QR Code – Variation 3",
-      "asset_id": 685487198,
-      "asset_name": "a4eed1b3-9a93-4e1a-9c40-cdfeed5a2c53.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a4eed1b3-9a93-4e1a-9c40-cdfeed5a2c53.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-10-28T15:49:05.235Z",
-      "updated_at": "2026-10-28T15:49:05.235Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685487403",
@@ -177,22 +33,82 @@
       "asset_name": "87344ea2-0b09-41d7-ba57-1de02cac4b8b.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/87344ea2-0b09-41d7-ba57-1de02cac4b8b.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:49:10.456Z",
-      "updated_at": "2026-10-28T15:49:10.456Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
-      "id": "685487623",
-      "title": "Seasonal and Community Highlights (3)",
-      "asset_id": 685487623,
-      "asset_name": "ac318506-d605-4a1f-bc1a-98beb598b6e6.jpg",
+      "id": "685484856",
+      "title": "4",
+      "asset_id": 685484856,
+      "asset_name": "a37800b4-24f6-4291-bca9-47778f3ddbd3.jpg",
       "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/ac318506-d605-4a1f-bc1a-98beb598b6e6.jpg",
-      "duration_seconds": 10,
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a37800b4-24f6-4291-bca9-47778f3ddbd3.jpg",
+      "duration_seconds": 5,
       "is_active": true,
-      "created_at": "2026-10-28T15:49:14.333Z",
-      "updated_at": "2026-10-28T15:49:14.333Z"
+      "created_at": "2026-10-28T15:48:21.668Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685485056",
+      "title": "5",
+      "asset_id": 685485056,
+      "asset_name": "3c7d4772-0827-4e48-b6d4-7e908e5958ac.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/3c7d4772-0827-4e48-b6d4-7e908e5958ac.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:25.348Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685485271",
+      "title": "6",
+      "asset_id": 685485271,
+      "asset_name": "970adc08-d2be-44d3-b98c-726f248d69d9.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/970adc08-d2be-44d3-b98c-726f248d69d9.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:29.328Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685485508",
+      "title": "11",
+      "asset_id": 685485508,
+      "asset_name": "ae15146c-ac22-4eae-b5d7-7651ce0fb624.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/ae15146c-ac22-4eae-b5d7-7651ce0fb624.jpg",
+      "duration_seconds": 7,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:33.433Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685485884",
+      "title": "Photo Announcement – Variation 2",
+      "asset_id": 685485884,
+      "asset_name": "44bbd276-6085-4d89-96e1-7fc47fdbaae5.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/44bbd276-6085-4d89-96e1-7fc47fdbaae5.jpg",
+      "duration_seconds": 4,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:41.113Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685486081",
+      "title": "Photo Announcement – Variation 3 (2)",
+      "asset_id": 685486081,
+      "asset_name": "2e67e312-f0a4-461f-94b1-7c6e4a2709d5.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/2e67e312-f0a4-461f-94b1-7c6e4a2709d5.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:45.199Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685487795",
@@ -201,22 +117,82 @@
       "asset_name": "cfc220a8-e059-47d5-9dea-a001e5180d9e.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/cfc220a8-e059-47d5-9dea-a001e5180d9e.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:49:18.179Z",
-      "updated_at": "2026-10-28T15:49:18.179Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
-      "id": "685488018",
-      "title": "Seasonal and Community Highlights",
-      "asset_id": 685488018,
-      "asset_name": "f004d8eb-f326-497d-9d23-c2130fe3de6b.jpg",
+      "id": "685486547",
+      "title": "Photo Announcement – Variation 3",
+      "asset_id": 685486547,
+      "asset_name": "2639fb26-6947-4a2f-91cb-0d8111ad8187.jpg",
       "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/f004d8eb-f326-497d-9d23-c2130fe3de6b.jpg",
-      "duration_seconds": 10,
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/2639fb26-6947-4a2f-91cb-0d8111ad8187.jpg",
+      "duration_seconds": 5,
       "is_active": true,
-      "created_at": "2026-10-28T15:49:22.105Z",
-      "updated_at": "2026-10-28T15:49:22.105Z"
+      "created_at": "2026-10-28T15:48:53.773Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685486759",
+      "title": "Quick Info + QR Code – Variation 1",
+      "asset_id": 685486759,
+      "asset_name": "9b9706e6-156f-49ea-9bef-e83b02e90cb3.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/9b9706e6-156f-49ea-9bef-e83b02e90cb3.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:57.465Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685486949",
+      "title": "Quick Info + QR Code – Variation 2",
+      "asset_id": 685486949,
+      "asset_name": "774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
+      "duration_seconds": 7,
+      "is_active": true,
+      "created_at": "2026-10-28T15:49:01.433Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685486313",
+      "title": "Photo Announcement – Variation 3 (3)",
+      "asset_id": 685486313,
+      "asset_name": "a80c829a-7611-4eb7-85fb-1d9d7b213486.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a80c829a-7611-4eb7-85fb-1d9d7b213486.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:49.180Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685487198",
+      "title": "Quick Info + QR Code – Variation 3",
+      "asset_id": 685487198,
+      "asset_name": "a4eed1b3-9a93-4e1a-9c40-cdfeed5a2c53.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/a4eed1b3-9a93-4e1a-9c40-cdfeed5a2c53.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:49:05.235Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685487623",
+      "title": "Seasonal and Community Highlights (3)",
+      "asset_id": 685487623,
+      "asset_name": "ac318506-d605-4a1f-bc1a-98beb598b6e6.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/ac318506-d605-4a1f-bc1a-98beb598b6e6.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:49:14.333Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685488252",
@@ -225,10 +201,10 @@
       "asset_name": "5f21d76a-bd9d-470e-a75c-f04071fe6866.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/5f21d76a-bd9d-470e-a75c-f04071fe6866.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:49:26.125Z",
-      "updated_at": "2026-10-28T15:49:26.125Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685488478",
@@ -237,10 +213,10 @@
       "asset_name": "7bd94200-8778-4c0f-b61e-6e93a9b8d472.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/7bd94200-8778-4c0f-b61e-6e93a9b8d472.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:49:30.129Z",
-      "updated_at": "2026-10-28T15:49:30.129Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
     },
     {
       "id": "685488695",
@@ -249,10 +225,34 @@
       "asset_name": "f48b38e6-a30b-4ac4-a1da-e9a8662f18ac.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/f48b38e6-a30b-4ac4-a1da-e9a8662f18ac.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-28T15:49:33.644Z",
-      "updated_at": "2026-10-28T15:49:33.644Z"
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685488018",
+      "title": "Seasonal and Community Highlights",
+      "asset_id": 685488018,
+      "asset_name": "f004d8eb-f326-497d-9d23-c2130fe3de6b.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/f004d8eb-f326-497d-9d23-c2130fe3de6b.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:49:22.105Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
+    },
+    {
+      "id": "685485708",
+      "title": "Faces to Know",
+      "asset_id": 685485708,
+      "asset_name": "35c221f4-32da-4eab-a001-eca1390478f3.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/35c221f4-32da-4eab-a001-eca1390478f3.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-10-28T15:48:37.085Z",
+      "updated_at": "2026-10-28T15:53:03.599Z"
     }
   ]
 }
