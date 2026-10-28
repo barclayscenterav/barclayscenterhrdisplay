@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-28T15:48:57.465Z",
+  "updated_at": "2026-10-28T15:49:01.433Z",
   "items": [
     {
       "id": "685484361",
@@ -145,6 +145,18 @@
       "is_active": true,
       "created_at": "2026-10-28T15:48:57.465Z",
       "updated_at": "2026-10-28T15:48:57.465Z"
+    },
+    {
+      "id": "685486949",
+      "title": "Quick Info + QR Code – Variation 2",
+      "asset_id": 685486949,
+      "asset_name": "774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/774dd8c8-1119-4e93-8a53-4e51fb60dbe3.jpg",
+      "duration_seconds": 10,
+      "is_active": true,
+      "created_at": "2026-10-28T15:49:01.433Z",
+      "updated_at": "2026-10-28T15:49:01.433Z"
     }
   ]
 }
