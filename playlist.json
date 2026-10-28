@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-10-28T15:46:41.381Z",
+  "updated_at": "2026-10-28T15:46:46.063Z",
   "items": [
     {
       "id": "640283158",
@@ -12,18 +12,6 @@
       "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-10-14T12:14:23.105Z",
-      "updated_at": "2026-10-14T12:19:01.315Z"
-    },
-    {
-      "id": "640282959",
-      "title": "Faces to Know",
-      "asset_id": 640282959,
-      "asset_name": "e2e0a59c-6d79-46d7-98f5-7555f2606945.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/e2e0a59c-6d79-46d7-98f5-7555f2606945.jpg",
-      "duration_seconds": 5,
-      "is_active": true,
-      "created_at": "2026-10-14T12:14:16.495Z",
       "updated_at": "2026-10-14T12:19:01.315Z"
     },
     {
