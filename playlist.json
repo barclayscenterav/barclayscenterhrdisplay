@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-11-10T16:16:30.076Z",
+  "updated_at": "2026-11-10T16:16:33.085Z",
   "items": [
     {
       "id": "732079141",
@@ -205,6 +205,18 @@
       "is_active": true,
       "created_at": "2026-11-10T16:16:30.076Z",
       "updated_at": "2026-11-10T16:16:30.076Z"
+    },
+    {
+      "id": "732082653",
+      "title": "Seasonal and Community Highlights",
+      "asset_id": 732082653,
+      "asset_name": "cdc6dc6d-2c6b-4914-ae8c-e974a4502119.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/cdc6dc6d-2c6b-4914-ae8c-e974a4502119.jpg",
+      "duration_seconds": 10,
+      "is_active": true,
+      "created_at": "2026-11-10T16:16:33.085Z",
+      "updated_at": "2026-11-10T16:16:33.085Z"
     }
   ]
 }
