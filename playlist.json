@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "updated_at": "2026-11-10T16:16:33.085Z",
+  "updated_at": "2026-11-10T16:17:59.815Z",
   "items": [
+    {
+      "id": "732079998",
+      "title": "1",
+      "asset_id": 732079998,
+      "asset_name": "6868706a-104d-4079-8b1c-7122b5954474.jpg",
+      "file_type": "image/jpeg",
+      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/6868706a-104d-4079-8b1c-7122b5954474.jpg",
+      "duration_seconds": 5,
+      "is_active": true,
+      "created_at": "2026-11-10T16:15:51.036Z",
+      "updated_at": "2026-11-10T16:17:59.815Z"
+    },
     {
       "id": "732079141",
       "title": "Seasonal and Community Highlights (2)",
@@ -9,10 +21,10 @@
       "asset_name": "0429d462-3ff1-4963-a054-0f04996b7691.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/0429d462-3ff1-4963-a054-0f04996b7691.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:15:36.948Z",
-      "updated_at": "2026-11-10T16:15:36.948Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732079348",
@@ -21,10 +33,10 @@
       "asset_name": "0f0e2fec-8ffc-4524-bfe3-d8a4996dddc6.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/0f0e2fec-8ffc-4524-bfe3-d8a4996dddc6.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 7,
       "is_active": true,
       "created_at": "2026-11-10T16:15:40.166Z",
-      "updated_at": "2026-11-10T16:15:40.166Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732079539",
@@ -33,10 +45,10 @@
       "asset_name": "06741ba8-92bc-4e69-875e-a9ed3c509b34.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/06741ba8-92bc-4e69-875e-a9ed3c509b34.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:15:42.820Z",
-      "updated_at": "2026-11-10T16:15:42.820Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732079750",
@@ -45,22 +57,10 @@
       "asset_name": "8822c804-51bf-4807-ab52-92bdf00cef7e.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/8822c804-51bf-4807-ab52-92bdf00cef7e.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:15:46.718Z",
-      "updated_at": "2026-11-10T16:15:46.718Z"
-    },
-    {
-      "id": "732079998",
-      "title": "1",
-      "asset_id": 732079998,
-      "asset_name": "6868706a-104d-4079-8b1c-7122b5954474.jpg",
-      "file_type": "image/jpeg",
-      "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/6868706a-104d-4079-8b1c-7122b5954474.jpg",
-      "duration_seconds": 10,
-      "is_active": true,
-      "created_at": "2026-11-10T16:15:51.036Z",
-      "updated_at": "2026-11-10T16:15:51.036Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732080243",
@@ -69,10 +69,10 @@
       "asset_name": "710276f1-7875-4d96-8bce-2eaf3d39baff.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/710276f1-7875-4d96-8bce-2eaf3d39baff.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:15:54.995Z",
-      "updated_at": "2026-11-10T16:15:54.995Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732080440",
@@ -81,10 +81,10 @@
       "asset_name": "f81dbeb4-5989-49dc-a0ed-d82000ddbd13.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/f81dbeb4-5989-49dc-a0ed-d82000ddbd13.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:15:58.770Z",
-      "updated_at": "2026-11-10T16:15:58.770Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732080965",
@@ -93,10 +93,10 @@
       "asset_name": "96591726-9397-4cd3-b3d7-008e8de3d46e.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/96591726-9397-4cd3-b3d7-008e8de3d46e.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:02.980Z",
-      "updated_at": "2026-11-10T16:16:02.980Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732081182",
@@ -105,10 +105,10 @@
       "asset_name": "04ef6de0-6a0e-42ab-bf16-3e45d78f836b.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/04ef6de0-6a0e-42ab-bf16-3e45d78f836b.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 7,
       "is_active": true,
       "created_at": "2026-11-10T16:16:06.932Z",
-      "updated_at": "2026-11-10T16:16:06.932Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732081346",
@@ -117,10 +117,10 @@
       "asset_name": "e59d318b-02a4-4e37-9ed5-9194931a71d8.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/e59d318b-02a4-4e37-9ed5-9194931a71d8.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 7,
       "is_active": true,
       "created_at": "2026-11-10T16:16:09.792Z",
-      "updated_at": "2026-11-10T16:16:09.792Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732081540",
@@ -129,10 +129,10 @@
       "asset_name": "c62b1570-8782-4493-b348-a92d907cb1b9.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/c62b1570-8782-4493-b348-a92d907cb1b9.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:13.377Z",
-      "updated_at": "2026-11-10T16:16:13.377Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732081706",
@@ -141,10 +141,10 @@
       "asset_name": "fac712b5-c620-4fb4-870f-5a13eb0e3386.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/fac712b5-c620-4fb4-870f-5a13eb0e3386.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:16.961Z",
-      "updated_at": "2026-11-10T16:16:16.961Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082000",
@@ -153,10 +153,10 @@
       "asset_name": "0ba73542-35ac-4ea8-bd3f-b49c71560c56.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/0ba73542-35ac-4ea8-bd3f-b49c71560c56.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:19.790Z",
-      "updated_at": "2026-11-10T16:16:19.790Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082093",
@@ -165,10 +165,10 @@
       "asset_name": "1ac8e640-b704-4404-a528-3dbe8f8592a6.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/1ac8e640-b704-4404-a528-3dbe8f8592a6.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:22.447Z",
-      "updated_at": "2026-11-10T16:16:22.447Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082228",
@@ -177,10 +177,10 @@
       "asset_name": "871309ca-fb74-4a9f-bd4e-7c82815de739.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/871309ca-fb74-4a9f-bd4e-7c82815de739.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:25.044Z",
-      "updated_at": "2026-11-10T16:16:25.044Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082339",
@@ -189,10 +189,10 @@
       "asset_name": "246170b4-8eeb-4206-9957-c48f2db4e16a.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/246170b4-8eeb-4206-9957-c48f2db4e16a.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:27.529Z",
-      "updated_at": "2026-11-10T16:16:27.529Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082489",
@@ -201,10 +201,10 @@
       "asset_name": "e673fd40-97c8-4fe4-9649-a1046631cdf3.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/e673fd40-97c8-4fe4-9649-a1046631cdf3.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 7,
       "is_active": true,
       "created_at": "2026-11-10T16:16:30.076Z",
-      "updated_at": "2026-11-10T16:16:30.076Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     },
     {
       "id": "732082653",
@@ -213,10 +213,10 @@
       "asset_name": "cdc6dc6d-2c6b-4914-ae8c-e974a4502119.jpg",
       "file_type": "image/jpeg",
       "media_url": "https://github.com/barclayscenterav/barclayscenterhrdisplay/releases/download/employee-lounge-media/cdc6dc6d-2c6b-4914-ae8c-e974a4502119.jpg",
-      "duration_seconds": 10,
+      "duration_seconds": 5,
       "is_active": true,
       "created_at": "2026-11-10T16:16:33.085Z",
-      "updated_at": "2026-11-10T16:16:33.085Z"
+      "updated_at": "2026-11-10T16:17:59.815Z"
     }
   ]
 }
